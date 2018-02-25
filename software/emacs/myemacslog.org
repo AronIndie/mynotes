@@ -1,0 +1,180 @@
+#+TITLE: my emacs log
+#+AUTHOR:RAY YANG
+
+* TODO emacs操作日志 [7/8]
+- State "TODO"       from "TODO"       [2018-01-08 周一 19:30]
+- State "TODO"       from "TODO"       [2018-01-08 周一 19:30]
+
+** DONE org-mode: code Chunk
+DEADLINE: <2017-11-07 周二>
+- python2 常规code chunk 正常运行（加入:result output 之后）
+- matplotlib 运行
+  - 在cygwin上安装pip, ipython, numpy, scipy, pandas, matplotlib, sklearn
+  - 在code chunk中运行作图，前提要加入matplotlib.use('AGG')
+  - 结果以文件链接的形式输出到下面
+  - 在图片链接上按C-c C-x C-v显示图片（注：图片链接中的'file:'是相对路径而不是绝对路径)
+
+** DONE ace-jump-mode
+DEADLINE: <2017-11-08 周三>
+添加ace-jump-mode 绑定C-c f
+
+** DONE helm-mode
+DEADLINE: <2017-11-08 周三>
+
+** TODO org-mode: 如何使用
+参考博客
+- [[https://www.cnblogs.com/holbrook/archive/2012/04/14/2447754.html][org-mode 最强任务管理利器]]
+- [[http://www.cnblogs.com/holbrook/archive/2012/04/12/2444992.html][org-mode 最好的文档编辑器]]
+
+** DONE nyan-mode
+添加下方彩虹猫，好可爱！
+
+** DONE 完善python自动补全
+- 使用company-jedi 模式
+- 无法实现包方法动态加载
+
+** DONE emacs org-mode 公式显示以及yas设置
+DEADLINE: <2018-01-08 周一>
+
+** DONE emacs orgmode 图标替换
+DEADLINE: <2018-01-08 周一>
+** 加快spacemacs打开速度
+在.spacemacs 的 user-init()函数中添加：
+#+BEGIN_SRC lisp
+(setq tramp-ssh-controlmaster-options
+        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+#+END_SRC
+** 解决org-mode导出latex公式难看且加载缓慢的问题
+init.el里加入：
+
+#+BEGIN_SRC emacs-lisp
+(setq org-html-mathjax-options
+  '((path "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
+    (scale "100")
+    (align "center")
+    (indent "2em")
+    (mathml t)))
+
+(setq org-html-mathjax-template
+              "
+<script type=\"text/javascript\" src=\"%PATH\"></script>
+<script type=\"text/javascript\">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        jax: [\"input/TeX\", \"output/HTML-CSS\"],
+        extensions: [\"tex2jax.js\",\"TeX/AMSmath.js\",\"TeX/AMSsymbols.js\",
+                     \"TeX/noUndefined.js\", \"[Contrib]/siunitx/siunitx.js\", \"[Contrib]/mhchem/mhchem.js\"],
+        tex2jax: {
+            inlineMath: [ [\"\\\\(\",\"\\\\)\"] ],
+            displayMath: [ ['$$','$$'], [\"\\\\[\",\"\\\\]\"], [\"\\\\begin{displaymath}\",\"\\\\end{displaymath}\"] ],
+            skipTags: [\"script\",\"noscript\",\"style\",\"textarea\",\"pre\",\"code\"],
+            ignoreClass: \"tex2jax_ignore\",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: \"TeX\"
+        },
+        TeX: {extensions: [\"AMSmath.js\",\"AMSsymbols.js\",  \"[Contrib]/siunitx/siunitx.js\", \"[Contrib]/mhchem/mhchem.js\"]},
+        showProcessingMessages: true,
+        displayAlign: \"%ALIGN\",
+        displayIndent: \"%INDENT\",
+
+        \"HTML-CSS\": {
+             scale: %SCALE,
+             availableFonts: [\"STIX\",\"TeX\"],
+             preferredFont: \"TeX\",
+             webFont: \"TeX\",
+             imageFont: \"TeX\",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    \"MML\",
+                 Firefox: \"MML\",
+                 Opera:   \"HTML\",
+                 other:   \"HTML\"
+             }
+        }
+    });
+/*]]>*///-->
+</script>")
+
+#+END_SRC
+* spacemacs使用
+
+** latex
+*** 参考文献问题
+- auctex
+- bibtex
+
+如何使用：
+- auctex中需要在init文件中加入默认xelatex的选项，以及自动补全等等，然后按C-c C-c 进行补全
+- bibtex 中设置helm-bibliography默认值，并且通过M-x helm-bibtex 进行调用，注意结尾加上\bibliography{bib文件路径}
+- 或者通过helm-bibtex-with-local...读取本地的bib文件
+- 编译：如果有文献，先用bibtex编译，再用xelatex编译两次
+
+
+*** company模式下C-f不补全
+
+#+BEGIN_SRC lisp
+;; auto-complete 防止C-f自动补全：一定要的等auto-complete加载完
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "C-f") nil))
+#+END_SRC
+
+*** latex模式下总是给我auto fill
+
+1. 首先，设置latex layer如下
+
+#+BEGIN_SRC lisp
+  (latex :variables
+            latex-build-command "xelatex"
+            latex-enable-auto-fill nil
+            latex-enable-folding t
+            )
+#+END_SRC
+
+2. 其次，在.spacemacs user-config() 中加入
+#+BEGIN_SRC lisp
+(setq latex-enable-auto-fill nil)
+#+END_SRC
+
+3. 在init.el文件中加入：
+#+BEGIN_SRC lisp
+(auto-fill-mode -1)
+
+(add-hook 'org-mode-hook (lambda ()
+                           (spacemacs/toggle-auto-completion-off)
+                           ))
+(add-hook 'latex-mode-hook (lambda ()
+                             (spacemacs/toggle-auto-completion-off)
+                             ))
+#+END_SRC
+
+大功告成！
+
+
+
+
+
+
+
+
+*** latex模式下的ref
+
+C-c ) 进入引用截面，C-m选择引用本地，进入本地引用类型选择，可以选择公式或者是图表或者其他
+
+** yasnippet
+
+*** 调用：
+
+- 输入key之后M-/展开
+- M-m i s 列出所有可展开的key
+
+*** 自己写snippat
+
+- M-x yas-new-snippet 开始写，
+    - name为名称用以标识，key为关键字（可直接展开的文本）
+    - 用$1, $2,...表示光标顺序，最后一个以$0结束。${1:这是注释} 用以注释
+- 以当前的name保存，运行M-x yas-reload-all重载，即可使用
+
+

@@ -1,0 +1,36 @@
+#+LATEX_HEADER: \newenvironment{lequation}{\begin{equation}\large}{\end{equation}}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: 时间安排
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: todo
+#+OPTIONS: H:4 toc:t
+
+* TODO 机器学习算法过完
+DEADLINE: <2018-01-30 周二>
+
+还差：
+** DONE 集成学习  1天
+- State "DONE"       from ""           [2018-01-22 周一 16:30]
+** 特征选择  1天
+** DONE 聚类      0.5天
+- State "DONE"       from ""           [2018-01-22 周一 21:19]
+** 已完成算法的整理与git 1天
+** 神经网络与深度学习    5天
+
+* 大数据相关
+DEADLINE: <2018-02-10 周六> SCHEDULED: <2018-01-30 周二>
+
+* 比赛与项目
+DEADLINE: <2018-02-20 周二> SCHEDULED: <2018-02-11 周日>
+
+- 东证期货杯
+- 智慧中国
+- 推荐算法项目
+
+* 招聘准备
+SCHEDULED: <2018-02-21 周三>
+- 复习之前的
+- 简历
+- 网站
+

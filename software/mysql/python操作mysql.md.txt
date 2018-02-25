@@ -1,0 +1,125 @@
+
+# 准备工作
+
+
+安装依赖库MySQLdb
+
+
+下载地址： https://pypi.python.org/pypi/MySQL-python/
+
+```python
+
+import MySQLdb
+
+```
+
+# 连接数据库
+
+```python
+
+
+import MySQLdb
+
+
+
+
+conn = MySQLdb.connect(
+
+    host=&#39;localhost&#39;,
+
+    port=3306,
+
+    user=&#39;root&#39;,
+
+    passwd=&#39;    &#39;,
+
+    db=&#39;network_data&#39;)
+
+cur = conn.cursor()
+
+###### command here ######
+
+#
+
+#########################
+
+
+
+cur.close()
+
+
+conn.commit()
+
+conn.close()
+
+```
+
+# 执行简单语句
+
+
+```python
+
+cur.execute("create table ......")
+
+
+```
+
+# 批量插入数据
+
+```python
+
+with open("/home/ray/Documents/suibe/2016/Network/data/recalcualate/top10_holder.txt","r") as f:
+
+    sqli = "insert into top10_holder values(%s,%s,%s,%s)"
+
+    for line in f:
+
+        segs = line.strip().split(",")
+
+        cur.execute(sqli, segs)
+
+### 或者
+
+lines = [i.strip().split(",") for i in open("/home/ray/Documents/suibe/2016/Network/data/recalcualate/top10_holder.txt","r").readlines() ]
+
+sqli = "insert into top10_holder values(%s,%s,%s,%s)"
+
+cur.executemany(sqli, lines)
+
+#  executemany() 方法可以一次插入多条值，执行单挑 sql 语句 , 但是重复执行参数列表里的参数 , 返回值为受影响的行数。
+
+```
+
+# 查询语句
+
+```python
+#获得表中有多少条数据
+aa=cur.execute("select * from student")
+print aa
+
+
+#一条一条输出
+
+cur.fetchone()
+
+
+#打印表中的多少数据
+info = cur.fetchmany(aa)
+for ii in info:
+    print ii
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

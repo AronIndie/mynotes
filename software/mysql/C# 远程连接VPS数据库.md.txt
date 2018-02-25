@@ -1,0 +1,52 @@
+# 服务器端授权
+
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO root@"%" IDENTIFIED BY &#39;123456&#39;;
+
+# C# 代码
+
+
+
+
+```c#
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Linq;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+using MySql.Data.Types;
+
+namespace VPS_connector
+{
+    class MainClass
+    {
+        public static void Main(string[] args)
+        {
+            Console.WriteLine("Let&#39;s rock and roll!");
+            using (MySqlConnection connection = new MySqlConnection())
+            {
+                connection.ConnectionString = "server=104.194.84.120;database=test;user=root;password=123456";
+                connection.Open();
+                using (MySqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = string.Format("SELECT id,age from connect");
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Console.WriteLine (    reader.GetValue(0).ToString());
+                            Console.WriteLine (    reader.GetValue(1).ToString());
+                        }
+                    }
+                }
+
+            }
+            Console.WriteLine("Hello World!");
+        }
+    }
+}
+
+```

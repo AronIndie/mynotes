@@ -1,0 +1,119 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: Learn JAVA
+#+AUTHOR: Ray Yang
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: pascal
+#+OPTIONS: H:4 toc:t 
+
+
+* 基本语法
+
+#+BEGIN_SRC java
+
+
+#+END_SRC
+
+* 高级语法
+
+* 特性
+
+
+* tips
+** 打印列表
+#+BEGIN_SRC java
+System.out.println(Arrays.toString(theItems));
+#+END_SRC
+
+
+println, print, printf区别：
+- println 最后带换行符
+- print   最后无换行符
+- printf  源自c，可实现各种格式化字符串
+
+** 迭代器使用
+
+类继承Iterator接口，并且实现hasNext和next方法
+#+BEGIN_SRC java
+public class MyLinkedList<T> implements Iterator<T> {
+
+    @Override
+    public boolean hasNext() {
+        return false;
+    }
+
+    @Override
+    public T next() {
+        return null;
+    }
+}
+#+END_SRC
+上述方法需要申明游标cursor，以不断地取数并且重置，而且经常会出现重置问题，因此我们可以通过一个内部类实现呢
+
+#+BEGIN_SRC java
+public class MyLinkedList<T> implements Iterator<T>{
+
+// ...
+
+  public theIterator getIterator(){
+    return new theIterator();
+  }
+
+  private class theIterator implements Iterator<T>{ // 注意此时类型无需申明泛型，而接口需要申明泛型
+    
+    int cursor = 0;
+
+    public boolean hasNext(){
+      return cursor < size(); // 内部类可以调用外部方法
+    }
+
+    public T next(){
+      if(theIterator.this.hasNext()){
+        return theItems[cursor++];
+      }
+      else{
+        throw new NoSuchElementException();
+      }
+    }
+  }
+}
+#+END_SRC
+
+此时通过外部调用getIterator()方法，获取迭代器实例，然后对实例进行
+#+BEGIN_SRC java
+theItarator iter = linkedlist.getIterator();
+while(iter.hasNext()){
+  T what_you_want  = iter.next()
+}
+#+END_SRC
+
+** 语法糖查看
+setting - editor - live Templates
+或者 IntelliJ中 C-j
+
+** TODO 泛型 [1/2]
+- State "TODO"       from ""           [2017-12-12 周二 14:37]
+*** DONE 泛型的接口继承
+Comparable 接口:
+#+BEGIN_SRC java
+<T extends Comparable<? super T>>
+#+END_SRC
+其中，<? super T> 表示为类型通配符，表示对T的所有父类均适用，一直到Object类
+如果是<? extends T> 同样为类型通配符，但是只能通配T的子类
+
+*** TODO 泛型原理：类型擦除
+- State "TODO"       from ""           [2017-12-12 周二 14:35]
+类型擦除会带来诸多问题。
+
+
+** 类型
+*** int 和 Integer区别:
+- int 是基本类型，直接存放数值， Integer 是对象，用一个引用指向该对象
+- 初始化时，int初始化为0，Integer初始化为null
+- Integer可以看成一个类，位Object的派生类，在申明时需要：Integer i = new Integer(10);，但是java具有自动装箱拆箱功能，所以可以写成Integer i = 10;
+- 泛型参数只接受Object的派生，比如Integer, String, Double, Float，不接受基本类型
+
+
+
+

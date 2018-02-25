@@ -1,0 +1,214 @@
+
+# 服务器安装ftp
+
+
+## 检查服务器状态
+
+### 是否安装ftp
+
+$ which vsftpd
+
+### 安装ftp
+
+$ sudo yum install vsftpd
+
+### 查看ftp服务状态
+
+$ service vsftpd status
+
+
+
+
+
+## 启动服务
+
+$ service vsftpd restart
+
+
+
+
+### 查看有没有启动
+
+$  netstat -an | grep 21
+
+
+
+
+ tcp        0      0 0.0.0.0:21                  0.0.0.0:*                   LISTEN  
+   如果看到以上信息，证明ftp服务已经开启。
+
+
+
+
+## 开启root用户权限
+
+vi /etc/vsftpd/ftpusers中注释掉root
+vi /etc/vsftpd/user_list中也注释掉root
+  然后重新启动ftp服务。
+
+
+
+
+
+
+
+# 服务器添加用户和权限
+
+Linux添加FTP用户并设置权限
+
+
+A. 登录Linux主机后，运行命令：”useradd ftpadmin -s /sbin/nologin “（ftpadmin是你要创建的名字）。该账户路径默认指向/home/ftpadmin目录；如果需要将用户指向其他目录，请运行命令：useradd ftpadmin -s /sbin/nologin –d /www(其他目录)
+
+B. 设置ftpadmin用户密码，运行命令：”passwd ftpadmin” ; 输入两次密码，匹配成功后，就设置好了ftpadmin用户的密码了。
+
+C.测试连接，您可以在“我的电脑”地址栏中输入  ftp://IP  来连接FTP服务器，根据提示输入账户密码。
+
+
+
+
+
+
+
+# 本地连接服务器
+
+$ ftp
+
+
+
+- ftp> open 104.194.84.120    
+
+    Connected to 104.194.84.120.
+
+    220 (vsFTPd 2.2.2)
+
+    Name (104.194.84.120:ray): me (服务器端用户名为me)
+
+    331 Please specify the password.
+
+    Password:     (在此输入密码）
+
+    230 Login successful.
+
+    Remote system type is UNIX.
+
+    Using binary mode to transfer files.
+
+- ftp> pwd
+
+- ftp> passive (启用passive模式） 或  LITERAL PASV(windows, cmd)
+
+- ftp> ls
+
+- ftp> get test.py local.py # 文件必须在me文件夹下
+
+- ftp> mget *.py (mget配合通配符实现批量传输)
+
+
+
+
+# 如遇报错
+
+500 OOPS: cannot change directory:/home/*******
+500 OOPS: child died
+
+解决方法:
+在终端输入命令：
+setsebool ftpd_disable_trans 1
+service vsftpd restart
+就ＯＫ了！
+
+
+
+
+
+
+
+常用命令：
+
+```
+
+
+
+
+FTP>open  [ftpservername]，和指定的远程Linux FTP服务器连接｡
+FTP>user  [username]  [password]，使用指定远程Linux FTP服务器的用户登录｡
+FTP>pwd，显示远程Linux FTP服务器上的当前路径｡
+FTP>ls，列出远程Linux FTP服务器上当前路径下的目录和文件｡
+FTP>dir，列出远程Linux FTP服务器上当前路径下的目录和文件(同上)｡
+FTP>mkdir  [foldname]，在远程Linux FTP服务器上当前路径下建立指定目录｡
+FTP>rmdir  [foldname]，删除远程Linux FTP服务器上当前路径下的指定目录｡
+FTP>cd  [foldname]，更改远程Linux FTP服务器上的工作目录｡
+FTP>delete  [filename]，删除远程Linux FTP服务器上指定的文件｡
+FTP>rename  [filename]  [newfilename]，重命名远程Linux FTP服务器上指定的文件｡
+FTP>close，从远程Linux FTP服务器断开但保留FTP命令参数提示｡
+FTP>disconnect，从远程Linux FTP服务器断开但保留FTP命令参数提示(同上)｡ 
+FTP>bye，结束和远程Linux FTP服务器的连接。
+FTP>quit，结束和远程Linux FTP服务器的连接(同上)。
+FTP>!，直接从远程Linux FTP服务器进入到本地shell中｡
+FTP>exit，(接上步)从本地shell环境中返回到远程Linux FTP服务器环境下｡
+
+FTP>!ls，列出本地机器上当前路径下的目录和文件｡
+FTP>lcd  [foldname]，更改本地机器的工作目录｡
+
+FTP>?，显示ftp命令说明｡
+FTP>help，显示ftp命令说明(同上)｡
+
+```
+
+
+
+
+ls 列出远程机的当前目录
+cd 在远程机上改变工作目录
+lcd 在本地机上改变工作目录
+ascii 设置文件传输方式为ASCII模式
+binary 设置文件传输方式为二进制模式
+close 终止当前的ftp会话
+hash 每次传输完数据缓冲区中的数据后就显示一个#号
+get（mget） 从远程机传送指定文件到本地机
+put（mput） 从本地机传送指定文件到远程机
+open 连接远程ftp站点
+断开与远程机的连接并退出ftp
+? 显示本地帮助信息
+! 转到Shell中
+
+下面简单将ftp常用命令作一简介。
+◆启动ftp会话 
+open命令用于打开一个与远程主机的会话。该命令的一般格式是：
+◆open 主机名/IP
+如果在ftp 会话期间要与一个以上的站点连接，通常只用不带参数的ftp命令。如果在会话期间只想与一台计算机连接，那么在命令行上指定远程主机名或IP地址作为ftp命令的参数。
+◆终止ftp会话 
+close、disconnect、和bye命令用于终止与远程机的会话。close和disronnect命令关闭与远程机的连接，但是使用户留在本地计算机的ftp程序中。和bye命令都关闭用户与远程机的连接，然后退出用户机上的ftp 程序。
+◆改变目录 
+“cd [目录]”命令用于在ftp会话期间改变远程机上的目录，lcd命令改变本地目录，使用户能指定查找或放置本地文件的位置。
+◆远程目录列表 
+ls命令列出远程目录的内容，就像使用一个交互shell中的ls命令一样。ls命令的一般格式是：
+ls [目录] [本地文件]
+如果指定了目录作为参数，那么ls就列出该目录的内容。如果给出一个本地文件的名字，那么这个目录列表被放入本地机上您指定的这个文件中。
+◆从远程系统获取文件 
+get和mget命令用于从远程机上获取文件。get命令的一般格式为：
+get 文件名
+您还可以给出本地文件名，这个文件名是这个要获取的文件在您的本地机上创建时的文件名。如果您不给出一个本地文件名，那么就使用远程文件原来的名字。
+mget命令一次获取多个远程文件。mget命令的一般格式为：
+mget 文件名列表
+使用用空格分隔的或带通配符的文件名列表来指定要获取的文件，对其中的每个文件都要求用户确认是否传送。
+◆向远程系统发送文件 
+put和mput命令用于向远程机发送文件。Put命令的一般格式为：
+put 文件名
+mput命令一次发送多个本地文件，mput命令的一般格式为：
+mput 文件名列表
+使用用空格分隔的或带通配符的文件名列表来指定要发送的文件。对其中的每个文件都要求用户确认是否发送。
+◆改变文件传输模式 
+默认情况下，ftp按ASCII模式传输文件，用户也可以指定其他模式。ascii和brinary命令的功能是设置传输的模式。用ASCII模式传输文件对纯文本是非常好的，但为避免对二进制文件的破坏，用户可以以二进制模式传输文件。
+◆检查传输状态 
+传输大型文件时，可能会发现让ftp提供关于传输情况的反馈信息是非常有用的。hash命令使ftp在每次传输完数据缓冲区中的数据后，就在屏幕上打印一个#字符。本命令在发送和接收文件时都可以使用。
+◆ftp中的本地命令 
+当您使用ftp时，字符“!”用于向本地机上的命令shell传送一个命令。如果用户处在ftp会话中，需要shell做某些事，就很有用。例如用户要建立一个目录来保存接收到的文件。如果输入!mkdir new_dir，那么Linux就在用户当前的本地目录中创建一个名为new_dir 的目录。
+
+这里Linux ftp命令就介绍到这里，应该足够在Linux系统下使用ftp工具了。
+
+来源：  http://os.51cto.com/art/201003/186325.htm
+
+
+
+

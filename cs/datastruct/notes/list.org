@@ -1,0 +1,46 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: List 线性表
+#+AUTHOR: Ray Yang
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: pascal
+#+OPTIONS: H:4 toc:t 
+
+
+* 顺序表
+
+** 特点
+*** 内存连续
+*** 大小动态扩展，当达到当前最大容量时，扩展为原来的两倍，同时虚拟机回收旧的数组
+*** 索引时间复杂度为
+
+*** 实现方法
+**** ensureCapacity       确保数组内存大小
+**** get, set             设置值与索引值
+**** size, isEmpty, clear 大小、是否为空，清空内存
+**** add, remove          添加元素与删除元素
+**** Iterator接口
+***** 迭代该表，拥有next, hasNext, remove三种方法，是一个==内部类==
+
+** 实现
+#+BEGIN_SRC java
+public class MyArrayList<AnyType> implements Iterable<AnyType>{
+
+    private static final int DEFAULT_CAPACITY = 10;
+
+    private int theSize;
+
+    private AnyType[] theItems;
+
+    public MyArrayList()
+    {doClear();}
+
+    private void doClear()
+      {theSize=0;
+        ensureCapacity(DEFAULT_CAPACITY);
+      }
+}
+
+#+END_SRC
+* 链表

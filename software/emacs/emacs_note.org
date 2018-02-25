@@ -1,0 +1,622 @@
+
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: Emacs Tips
+#+AUTHOR: Ray Yang
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: pascal
+#+OPTIONS: H:4 toc:t 
+
+
+
+* command notes
+
+
+| command                   | desc                                                |
+| --------------            | -------                                             |
+| M-x package-list-packages | 更新软件包，按x执行                                 |
+| M-x recover-file          | 恢复文件（从自动保存文件中#test.py#）               |
+| M-x recover-this-file     | 恢复文件（从自动保存文件中#test.py#） C-x u少量撤销 |
+| M-x revert-buffer         | 恢复到上次保存时候的样子                            |
+
+
+
+** emacs + jupyter
+
+==注意：所有路径，文件名必须为英文，否则出现[warn] Kernal not work（类似）的错误 ==
+1. 现开jupyter端口，用bash，获取端口号和密码，密码即token
+2. emacs: M-x ein:notebooklist-login，输入端口号和密码
+3. emacs: M-x ein:notebooklist-open，打开notebook
+4. 命令：
+| command       | desc                                                                 |   |
+|---------------|----------------------------------------------------------------------|---|
+| C-c C-k       | 剪切cell                                                             |   |
+| C-c C-n 或C-p | 上下跳cell                                                           |   |
+| C-c C-l       | 清除该cell的output                                                   |   |
+| C-c C-y       | 粘贴cell                                                             |   |
+| C-c M-w       | 复制cell                                                             |   |
+| C-c C-a/C-b   | 上/下方插入cell                                                      |   |
+| C-c C-u       | 输入'c'为code模式，输入'm'为markdown模式，还有'r(aw)'，和'h(eading)' |   |
+| C-c C-q       | 关闭所有notebook并且关闭kernal                                       | ' |
+
+
+
+** 奇技淫巧
+
+
+1. C-c m c 多重游标
+2. C-x ( 开始录制宏；C-x ) 结束录制宏 C-x e 运行宏 C-u 10 C-x e运行10次宏
+3. C-c > 打开日历
+4. 想绑定键位，但是不知道命令怎么写时：
+    - M-x global-set-key RET 输入键位 RET 输入函数功能，如(set-mark-command)
+
+    - C-x Esc Esc 查看上一次复杂命令，得到详细的绑定键位命令，复制到init.el文件中
+
+5. C-c C-x c RET 数字 ：复制多少次
+6. C-c C-x C-v orgmode 打开图片
+7. org-mode下C-c C-d插入日期
+8. 选中当前行 C-c l 我自己定义的，（python中直接C-c运行当前行）
+9. latex中的自动提示，如\footnote[]{}，光标调到[]上，按C-d删除当前可选的[]
+10. spacemacs添加包：
+    - 在.spacemacs文件中的dotspacemacs-additional-packages '(需要加载的包)里填入需要加载的包
+    - 在.spacemacs文件中的dotspacemacs/user-config ()函数中写入(require 该包)或者是(use-package 该包)
+11. 加快spacemacs打开速度，在.spacemacs 的 user-init()函数中添加：
+#+BEGIN_SRC lisp
+(setq tramp-ssh-controlmaster-options
+        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+#+END_SRC
+** org-mode
+
+| command      | desc         |
+|--------------+--------------|
+| C-c C-z      | 添加note     |
+| C-c C-t _    | 切换状态     |
+| S-left/right | 切换状态     |
+| C-c C-d      | 插入deadline |
+| C-c C-s      | 插入starline |
+
+
+*** tips:
+- 显示图片：引用前面加上file\:，可以相对引用，也可以绝对引用，但是不可加description，否则无法正常显示。之后按C-c C-x C-v显示图片
+
+  
+*** 更多快捷键:                                                       :快捷键:
+CLOCK: [2017-12-23 周六 17:31]
+================================================================================
+Org-Mode Reference Card (for version 7.8.11)
+================================================================================
+
+
+
+================================================================================
+Getting Started
+================================================================================
+To read the on-line documentation try             M-x org-info
+
+================================================================================
+Visibility Cycling
+================================================================================
+
+rotate current subtree between states             TAB
+rotate entire buffer between states               S-TAB
+restore property-dependent startup visibility     C-u C-u TAB
+show the whole file, including drawers            C-u C-u C-u TAB
+reveal context around point                       C-c C-r
+
+================================================================================
+Motion
+================================================================================
+
+next/previous heading                             C-c C-n/p
+next/previous heading, same level                 C-c C-f/b
+backward to higher level heading                  C-c C-u
+jump to another place in document                 C-c C-j
+previous/next plain list item                     S-UP/DOWN\notetwo
+
+================================================================================
+Structure Editing
+================================================================================
+
+insert new heading/item at current level          M-RET
+insert new heading after subtree                  C-RET
+insert new TODO entry/checkbox item               M-S-RET
+insert TODO entry/ckbx after subtree              C-S-RET
+turn (head)line into item, cycle item type        C-c -
+turn item/line into headline                      C-c *
+promote/demote heading                            M-LEFT/RIGHT
+promote/demote current subtree                    M-S-LEFT/RIGHT
+move subtree/list item up/down                    M-S-UP/DOWN
+sort subtree/region/plain-list                    C-c ^
+clone a subtree                                   C-c C-x c
+copy visible text                                 C-c C-x v
+kill/copy subtree                                 C-c C-x C-w/M-w
+yank subtree                                      C-c C-x C-y or C-y
+narrow buffer to subtree / widen                  C-x n s/w
+
+================================================================================
+Capture - Refile - Archiving
+================================================================================
+capture a new item (C-u C-u = goto last)          C-c c \noteone
+refile subtree (C-u C-u = goto last)              C-c C-w
+archive subtree using the default command         C-c C-x C-a
+move subtree to archive file                      C-c C-x C-s
+toggle ARCHIVE tag / to ARCHIVE sibling           C-c C-x a/A
+force cycling of an ARCHIVEd tree                 C-TAB
+
+================================================================================
+Filtering and Sparse Trees
+================================================================================
+
+construct a sparse tree by various criteria       C-c /
+view TODO's in sparse tree                        C-c / t/T
+global TODO list in agenda mode                   C-c a t \noteone
+time sorted view of current org file              C-c a L
+
+================================================================================
+Tables
+================================================================================
+
+--------------------------------------------------------------------------------
+Creating a table
+--------------------------------------------------------------------------------
+
+just start typing, e.g.                           |Name|Phone|Age RET |- TAB
+convert region to table                           C-c |
+... separator at least 3 spaces                   C-3 C-c |
+
+--------------------------------------------------------------------------------
+Commands available inside tables
+--------------------------------------------------------------------------------
+
+The following commands work when the cursor is inside a table.
+Outside of tables, the same keys may have other functionality.
+
+--------------------------------------------------------------------------------
+Re-aligning and field motion
+--------------------------------------------------------------------------------
+
+re-align the table without moving the cursor      C-c C-c
+re-align the table, move to next field            TAB
+move to previous field                            S-TAB
+re-align the table, move to next row              RET
+move to beginning/end of field                    M-a/e
+
+--------------------------------------------------------------------------------
+Row and column editing
+--------------------------------------------------------------------------------
+
+move the current column left                      M-LEFT/RIGHT
+kill the current column                           M-S-LEFT
+insert new column to left of cursor position      M-S-RIGHT
+
+move the current row up/down                      M-UP/DOWN
+kill the current row or horizontal line           M-S-UP
+insert new row above the current row              M-S-DOWN
+insert hline below (C-u : above) current row      C-c -
+insert hline and move to line below it            C-c RET
+sort lines in region                              C-c ^
+
+--------------------------------------------------------------------------------
+Regions
+--------------------------------------------------------------------------------
+
+cut/copy/paste rectangular region                 C-c C-x C-w/M-w/C-y
+fill paragraph across selected cells              C-c C-q
+
+--------------------------------------------------------------------------------
+Miscellaneous
+--------------------------------------------------------------------------------
+
+to limit column width to N characters, use        ...| <N> |...
+edit the current field in a separate window       C-c `
+make current field fully visible                  C-u TAB
+export as tab-separated file                      M-x org-table-export
+import tab-separated file                         M-x org-table-import
+sum numbers in current column/rectangle           C-c +
+
+--------------------------------------------------------------------------------
+Tables created with the table.el package
+--------------------------------------------------------------------------------
+
+insert a new table.el table                       C-c ~
+recognize existing table.el table                 C-c C-c
+convert table (Org-mode <-> table.el)             C-c ~
+
+--------------------------------------------------------------------------------
+Spreadsheet
+--------------------------------------------------------------------------------
+
+Formulas typed in field are executed by TAB,
+RET and C-c C-c.  = introduces a column
+formula, := a field formula.
+
+Example: Add Col1 and Col2                        |=$1+$2      |
+... with printf format specification              |=$1+$2;%.2f|
+... with constants from constants.el              |=$1/$c/$cm |
+sum from 2nd to 3rd hline                         |:=vsum(@II..@III)|
+apply current column formula                      | = |
+
+set and eval column formula                       C-c =
+set and eval field formula                        C-u C-c =
+re-apply all stored equations to current line     C-c *
+re-apply all stored equations to entire table     C-u C-c *
+iterate table to stability                        C-u C-u C-c *
+rotate calculation mark through # * ! ^ _ $       C-#
+show line, column, formula reference              C-c ?
+toggle grid / debugger                            C-c }/{
+
+--------------------------------------------------------------------------------
+Formula Editor
+--------------------------------------------------------------------------------
+
+edit formulas in separate buffer                  C-c '
+exit and install new formulas                     C-c C-c
+exit, install, and apply new formulas             C-u C-c C-c
+abort                                             C-c C-q
+toggle reference style                            C-c C-r
+pretty-print Lisp formula                         TAB
+complete Lisp symbol                              M-TAB
+shift reference point                             S-cursor
+shift test line for column references             M-up/down
+scroll the window showing the table               M-S-up/down
+toggle table coordinate grid                      C-c }
+
+================================================================================
+Links
+================================================================================
+
+globally store link to the current location       C-c l \noteone
+insert a link (TAB completes stored links)        C-c C-l
+insert file link with file name completion        C-u C-c C-l
+edit (also hidden part of) link at point          C-c C-l
+
+open file links in emacs                          C-c C-o
+...force open in emacs/other window               C-u C-c C-o
+open link at point                                mouse-1/2
+...force open in emacs/other window               mouse-3
+record a position in mark ring                    C-c %
+jump back to last followed link(s)                C-c &
+find next link                                    C-c C-x C-n
+find previous link                                C-c C-x C-p
+edit code snippet of file at point                C-c '
+toggle inline display of linked images            C-c C-x C-v
+
+================================================================================
+Working with Code (Babel)
+================================================================================
+
+execute code block at point                       C-c C-c
+open results of code block at point               C-c C-o
+check code block at point for errors              C-c C-v c
+insert a header argument with completion          C-c C-v j
+view expanded body of code block at point         C-c C-v v
+view information about code block at point        C-c C-v I
+go to named code block                            C-c C-v g
+go to named result                                C-c C-v r
+go to the head of the current code block          C-c C-v u
+go to the next code block                         C-c C-v n
+go to the previous code block                     C-c C-v p
+demarcate a code block                            C-c C-v d
+execute the next key sequence in the code edit bu C-c C-v x
+execute all code blocks in current buffer         C-c C-v b
+execute all code blocks in current subtree        C-c C-v s
+tangle code blocks in current file                C-c C-v t
+tangle code blocks in supplied file               C-c C-v f
+ingest all code blocks in supplied file into the  C-c C-v i
+switch to the session of the current code block   C-c C-v z
+load the current code block into a session        C-c C-v l
+view sha1 hash of the current code block          C-c C-v a
+
+================================================================================
+Completion
+================================================================================
+
+In-buffer completion completes TODO keywords at headline start, TeX
+macros after `\', option keywords after `#-', TAGS
+after  `:', and dictionary words elsewhere.
+
+complete word at point                            M-TAB
+
+
+
+
+================================================================================
+TODO Items and Checkboxes
+================================================================================
+
+rotate the state of the current item              C-c C-t
+select next/previous state                        S-LEFT/RIGHT
+select next/previous set                          C-S-LEFT/RIGHT
+toggle ORDERED property                           C-c C-x o
+view TODO items in a sparse tree                  C-c C-v
+view 3rd TODO keyword's sparse tree               C-3 C-c C-v
+
+set the priority of the current item              C-c , [ABC]
+remove priority cookie from current item          C-c , SPC
+raise/lower priority of current item              S-UP/DOWN\notetwo
+
+insert new checkbox item in plain list            M-S-RET
+toggle checkbox(es) in region/entry/at point      C-c C-x C-b
+toggle checkbox at point                          C-c C-c
+update checkbox statistics (C-u : whole file)     C-c #
+
+================================================================================
+Tags
+================================================================================
+
+set tags for current heading                      C-c C-q
+realign tags in all headings                      C-u C-c C-q
+create sparse tree with matching tags             C-c \\
+globally (agenda) match tags at cursor            C-c C-o
+
+================================================================================
+Properties and Column View
+================================================================================
+
+set property/effort                               C-c C-x p/e
+special commands in property lines                C-c C-c
+next/previous allowed value                       S-left/right
+turn on column view                               C-c C-x C-c
+capture columns view in dynamic block             C-c C-x i
+
+quit column view                                  q
+show full value                                   v
+edit value                                        e
+next/previous allowed value                       n/p or S-left/right
+edit allowed values list                          a
+make column wider/narrower                        > / <
+move column left/right                            M-left/right
+add new column                                    M-S-right
+Delete current column                             M-S-left
+
+
+================================================================================
+Timestamps
+================================================================================
+
+prompt for date and insert timestamp              C-c .
+like C-c . but insert date and time format        C-u C-c .
+like C-c . but make stamp inactive                C-c !
+insert DEADLINE timestamp                         C-c C-d
+insert SCHEDULED timestamp                        C-c C-s
+create sparse tree with all deadlines due         C-c / d
+the time between 2 dates in a time range          C-c C-y
+change timestamp at cursor Â±1 day                S-RIGHT/LEFT\notetwo
+change year/month/day at cursor by Â±1            S-UP/DOWN\notetwo
+access the calendar for the current date          C-c >
+insert timestamp matching date in calendar        C-c <
+access agenda for current date                    C-c C-o
+select date while prompted                        mouse-1/RET
+toggle custom format display for dates/times      C-c C-x C-t
+
+
+--------------------------------------------------------------------------------
+Clocking time
+--------------------------------------------------------------------------------
+
+start clock on current item                       C-c C-x C-i
+stop/cancel clock on current item                 C-c C-x C-o/x
+display total subtree times                       C-c C-x C-d
+remove displayed times                            C-c C-c
+insert/update table with clock report             C-c C-x C-r
+
+================================================================================
+Agenda Views
+================================================================================
+
+add/move current file to front of agenda          C-c [
+remove current file from your agenda              C-c ]
+cycle through agenda file list                    C-'
+set/remove restriction lock                       C-c C-x </>
+
+compile agenda for the current week               C-c a a \noteone
+compile global TODO list                          C-c a t \noteone
+compile TODO list for specific keyword            C-c a T \noteone
+match tags, TODO kwds, properties                 C-c a m \noteone
+match only in TODO entries                        C-c a M \noteone
+find stuck projects                               C-c a # \noteone
+show timeline of current org file                 C-c a L \noteone
+configure custom commands                         C-c a C \noteone
+agenda for date at cursor                         C-c C-o
+
+--------------------------------------------------------------------------------
+Commands available in an agenda buffer
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+View Org file
+--------------------------------------------------------------------------------
+
+show original location of item                    SPC/mouse-3
+show and recenter window                          L
+goto original location in other window            TAB/mouse-2
+goto original location, delete other windows      RET
+show subtree in indirect buffer, ded.\ frame      C-c C-x b
+toggle follow-mode                                F
+
+--------------------------------------------------------------------------------
+Change display
+--------------------------------------------------------------------------------
+
+delete other windows                              o
+view mode dispatcher                              v
+switch to day/week/month/year/def view            d w vm vy vSP
+toggle diary entries / time grid / habits         D / G / K
+toggle entry text / clock report                  E / R
+toggle display of logbook entries                 l / v l/L/c
+toggle inclusion of archived trees/files          v a/A
+refresh agenda buffer with any changes            r / g
+filter with respect to a tag                      /
+save all org-mode buffers                         s
+display next/previous day,week,...                f / b
+goto today / some date (prompt)                   . / j
+
+--------------------------------------------------------------------------------
+Remote editing
+--------------------------------------------------------------------------------
+
+digit argument                                    0-9
+change state of current TODO item                 t
+kill item and source                              C-k
+archive default                                   $ / a
+refile the subtree                                C-c C-w
+set/show tags of current headline                 : / T
+set effort property (prefix=nth)                  e
+set / compute priority of current item            , / P
+raise/lower priority of current item              S-UP/DOWN\notetwo
+run an attachment command                         C-c C-a
+schedule/set deadline for this item               C-c C-s/d
+change timestamp one day earlier/later            S-LEFT/RIGHT\notetwo
+change timestamp to today                         >
+insert new entry into diary                       i
+start/stop/cancel the clock on current item       I / O / X
+jump to running clock entry                       J
+mark / unmark / execute bulk action               m / u / B
+
+--------------------------------------------------------------------------------
+Misc
+--------------------------------------------------------------------------------
+
+follow one or offer all links in current entry    C-c C-o
+
+--------------------------------------------------------------------------------
+Calendar commands
+--------------------------------------------------------------------------------
+
+find agenda cursor date in calendar               c
+compute agenda for calendar cursor date           c
+show phases of the moon                           M
+show sunrise/sunset times                         S
+show holidays                                     H
+convert date to other calendars                   C
+
+--------------------------------------------------------------------------------
+Quit and Exit
+--------------------------------------------------------------------------------
+
+quit agenda, remove agenda buffer                 q
+exit agenda, remove all agenda buffers            x
+
+================================================================================
+LaTeX and cdlatex-mode
+================================================================================
+
+preview LaTeX fragment                            C-c C-x C-l
+expand abbreviation (cdlatex-mode)                TAB
+insert/modify math symbol (cdlatex-mode)          ` / '
+insert citation using RefTeX                      C-c C-x [
+
+================================================================================
+Exporting and Publishing
+================================================================================
+
+Exporting creates files with extensions .txt and .html
+in the current directory.  Publishing puts the resulting file into
+some other place.
+
+export/publish dispatcher                         C-c C-e
+
+export visible part only                          C-c C-e v
+insert template of export options                 C-c C-e t
+toggle fixed width for entry or region            C-c :
+toggle pretty display of scripts, entities        C-c C-x {\tt\char`\}
+
+--------------------------------------------------------------------------------
+Comments: Text not being exported
+--------------------------------------------------------------------------------
+
+Lines starting with # and subtrees starting with COMMENT are
+never exported.
+
+toggle COMMENT keyword on entry                   C-c ;
+
+================================================================================
+Dynamic Blocks
+================================================================================
+
+update dynamic block at point                     C-c C-x C-u
+update all dynamic blocks                         C-u C-c C-x C-u
+
+================================================================================
+Notes
+================================================================================
+[1] This is only a suggestion for a binding of this command.  Choose
+your own key as shown under ACTIVATION.
+
+[2] Keybinding affected by org-support-shift-select and also
+ org-replace-disputed-keys.
+
+  
+
+
+
+
+
+* emacs+orgmode 实时展示公式
+
+主要参考自https://orgmode.org/worg/org-tutorials/org-latex-preview.html
+
+可以参考别人的设置：https://github.com/kaushalmodi/.emacs.d/blob/42831e8997f7a3c90bf4bd37ae9f03c48277781d/setup-files/setup-org.el#L413-L584
+** 环境安装
+
+其机制是先编译latex，然后用软件转为图片，所以需要两个环境
+- texlive-full
+- pdf转png软件，包括dvipng(linux)和imagemagick(跨平台)
+
+windows下安装imagemagick:
+网址： https://legacy.imagemagick.org/script/binary-releases.php
+选择其中的Windows Binary Release，最新的exe文件，下载后双击安装即可，一定要包括在环境变量之中
+
+检测是否装好：
+
+#+BEGIN_SRC bash
+convert /tmp/example.pdf /tmp/example.png
+display /tmp/example.png
+#+END_SRC
+
+** emacs设置
+
+1. latex编译环境：(最好用pdflatex，xelatex容易卡死)
+#+BEGIN_SRC lisp
+(setq org-latex-compiler "pdflatex")
+#+END_SRC
+=注意：= 先删去我自定义头文件中的\usepackage(xeCJK)和\setmainfont("微软雅黑")，否则pdf编译报错
+
+2. latex命令设置
+#+BEGIN_SRC lisp
+(setq org-latex-pdf-process
+      '("pdflatex -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
+
+一般公式编译一次即可，如果遇到较复杂的情况以及需要bib的情况，则改为
+#+BEGIN_SRC lisp
+  (setq org-latex-pdf-process
+        '("pdflatex -interaction nonstopmode -output-directory %o %f"
+          "biber %b"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
+
+3. emacs调用图片转换软件设置
+
+#+BEGIN_SRC lisp
+(setq org-latex-create-formula-image-program 'imagemagick)
+#+END_SRC
+如果是dvipng则将imagemagick改为dvipng
+
+** 使用
+在org-mode中插入公式：
+$$
+a = b_1
+$$
+或
+\[
+a = b_1
+\]
+
+- 在公式上按 ~C-c C-x C-l~ 显示公式，按 ~C-c C-c~ 返回编辑模式。
+- ~C-u C-c C-x C-l~ 显示该分支所有公式
+- ~C-u C-u C-c C-x C-l~ 显示文中所有公式
+
+

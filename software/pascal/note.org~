@@ -1,0 +1,955 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: Learn Pascal
+#+AUTHOR: Ray Yang
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: pascal
+#+OPTIONS: H:4 toc:t 
+
+
+
+* 基础类型
+
+** 数据类型
+
+*** 整型
+
++ integer
++ cardinal 大于0
++ shortint
++ smallint
++ longint
++ int64
++ byte
++ word
++ longword
+
+*** 枚举类型
+
+#+BEGIN_SRC pascal
+type
+months = (Jan, Feb, Mar, Apr);
+var
+   thismonth : months = Jan;
+
+begin
+   writeln(thismonth);
+end.
+#+END_SRC
+
+*** 子界类型
+
+#+BEGIN_SRC pascal
+var
+    age = 1 ... 100;
+#+END_SRC
+
+** 变量类型
+
+*pascal不区分大小写*
+
+| Type       | Description                                                           |
+|------------+-----------------------------------------------------------------------|
+| Character  | Typically a single octet (one byte). This is an integer type.         |
+| Integer    | The most natural size of integer for the machine.                     |
+| Real       | A single-precision floating point value.                              |
+| Boolean    | Specifies true or false logical values. This is also an integer type. |
+| Enumerated | Specifies a user-defined list.                                        |
+| Subrange   | Represents variables whose values lie within a range.                 |
+| String     | Stores an array of characters                                         |
+
+#+BEGIN_SRC pascal
+
+var a:integer;	{第一种申明变量的方法，但是未初始化，需要赋值}
+type		{第二种申明变量的方法, 相当于继承}
+   b = integer;
+var
+   c : b = 2;
+var d : integer = 3; {第三种：直接赋值}
+begin
+   a := 1;
+   writeln(a);
+   writeln(c);
+   writeln(d);
+end.
+#+END_SRC
+
+** 常量
+
+- Ordinal types
+- Set types
+- Pointer types (but the only allowed value is Nil).
+- Real types
+- Char
+- String
+
+#+BEGIN_SRC pascal
+age = 22;
+vowels = set of (A, E, I, O, U);
+P = Nil; {表示指针所指向为空}
+e = 2.718;
+operator = '+';
+name = 'yangrui';
+#+END_SRC
+
+** 运算符
+
+
+- Arithmetic operators
+  + '+', '-', '*', 'div', 'mod'
+- Relational operators
+  + =, <>, >, <, >=, <=
+- Boolean operators
+  + and, or, not
+  + and then, or else (注：有顺序，先判断前面的，再判断后面的)
+- Bit operators
+  + 位运算符，暂时不掌握
+- Set operators
+- String operators
+
+*** 算数运算符
+
+
+
+* 控制语句
+
+** 条件语句（决策控制）
+
+
+- if then
+  #+BEGIN_SRC pascal
+  if (a < 20) then
+     writeln('a < 20');  
+  #+END_SRC
+
+- if then - else if then - else
+  #+BEGIN_SRC pascal
+  if (a < 20) then
+    writeln('a < 20') {no ;}
+  else if (a > 30) then
+    writeln('a > 30')  {no ;}
+  else
+    writeln('20 <= a <= 30');  
+  #+END_SRC
+
+- if then 的嵌套形式
+
+- case 语句
+#+BEGIN_SRC pascal
+var a :char = 'A';
+case (a) of
+    'A' : writeln('great');
+    'B', 'c' : writeln('not bad');
+end;
+#+END_SRC
+
+- case else 语句
+#+BEGIN_SRC pascal
+var a :char = 'A';
+case (a) of
+    'A' : writeln('great');
+    'B', 'c' : writeln('not bad');
+else
+    writeln('bad');
+end;
+#+END_SRC
+
+
+** 循环
+- while do
+#+BEGIN_SRC pascal
+var a:integer = 0;
+
+begin
+while a <= 10 do
+begin
+   a := a + 1;
+   writeln(a);
+end;
+end.
+
+#+END_SRC
+
+- for do
+#+BEGIN_SRC pascal
+var a:integer; {此时a不可初始化，否则报错}
+
+begin
+   for a := 10 to 20 do
+   begin
+      writeln(a);
+   end;
+end.
+
+#+END_SRC
+
+- repeat until
+同do until，不赘述
+
+** 函数
+#+BEGIN_SRC pascal
+function max(num1, num2: integer) : integer; {函数定义相当于一层申明}
+var
+   {local variable}
+   result :  integer;
+begin
+   if (num1 >= num2) then
+      result := num1
+   else
+      result := num2;
+   max := result;
+end;
+
+var
+   num1, num2, bigger : integer;
+
+begin
+
+   
+   num1 :=1;
+   num2 :=2;
+   bigger :=  max(num1, num2);
+   writeln(bigger);
+end.
+#+END_SRC
+
+** 过程
+#+BEGIN_SRC pascal
+program exProcedure;
+var
+   a, b, c,  min: integer;
+   
+procedure findMin(x, y, z: integer; var m: integer); 
+(* Finds the minimum of the 3 values *)
+begin
+   if x < y then
+      m:= x
+   else
+      m:= y;
+   if z < m then
+      m:= z;
+end; { end of procedure findMin }
+
+begin
+   writeln(' Enter three numbers: ');
+   readln( a, b, c);
+   findMin(a, b, c, min); (* Procedure call *)
+   writeln(' Minimum: ', min);
+end.
+#+END_SRC
+
+** 变量作用域 
+- 局部变量
+- 全局变量
+- 形式参数
+
+
+* 高阶类型
+
+
+** 字符串string
+
+pascal 字符串函数和过程：
+| num | name                                                                      |
+|-----+---------------------------------------------------------------------------|
+|   1 | function AnsiCompareStr( const S1: ; const S2: ):Integer;                 |
+|     | Compare two strings                                                       |
+|   2 | function AnsiCompareText( const S1: ; const S2: ):Integer;                |
+|     | Compare two strings, case insensitive                                     |
+|   3 | function AnsiExtractQuotedStr( var Src: PChar; Quote: Char ):;            |
+|     | Removes quotes from string                                                |
+|   4 | function AnsiLastChar( const S: ):PChar;                                  |
+|     | Get last character of string                                              |
+|   5 | function AnsiLowerCase( const s: ):                                       |
+|     | Convert string to all-lowercase                                           |
+|   6 | function AnsiQuotedStr( const S: ; Quote: Char ):;                        |
+|     | Qoutes a string                                                           |
+|   7 | function AnsiStrComp( S1: PChar; S2: PChar ):Integer;                     |
+|     | Compare strings case-sensitive                                            |
+|   8 | function AnsiStrIComp( S1: PChar; S2: PChar ):Integer;                    |
+|     | Compare strings case-insensitive                                          |
+|   9 | function AnsiStrLComp( S1: PChar; S2: PChar; MaxLen: Cardinal ):Integer;  |
+|     | Compare L characters of strings case sensitive                            |
+|  10 | function AnsiStrLIComp( S1: PChar; S2: PChar; MaxLen: Cardinal ):Integer; |
+|     | Compare L characters of strings case insensitive                          |
+|  11 | function AnsiStrLastChar( Str: PChar ):PChar;                             |
+|     | Get last character of string                                              |
+|  12 | function AnsiStrLower( Str: PChar ):PChar;                                |
+|     | Convert string to all-lowercase                                           |
+|  13 | function AnsiStrUpper( Str: PChar ):PChar;                                |
+|     | Convert string to all-uppercase                                           |
+|  14 | function AnsiUpperCase( const s: ):;                                      |
+|     | Convert string to all-uppercase                                           |
+|  15 | procedure AppendStr( var Dest: ; const S: );                              |
+|     | Append 2 strings                                                          |
+|  16 | procedure AssignStr( var P: PString; const S: );                          |
+|     | Assign value of strings on heap                                           |
+|  17 | function CompareStr( const S1: ; const S2: ):Integer; overload;           |
+|     | Compare two strings case sensitive                                        |
+|  18 | function CompareText( const S1: ; const S2: ):Integer;                    |
+|     | Compare two strings case insensitive                                      |
+|  19 | procedure DisposeStr( S: PString ); overload;                             |
+|     | Remove string from heap                                                   |
+|  20 | procedure DisposeStr( S: PShortString ); overload;                        |
+|     | Remove string from heap                                                   |
+|  21 | function IsValidIdent( const Ident: ):Boolean;                            |
+|     | Is string a valid pascal identifier                                       |
+|  22 | function LastDelimiter( const Delimiters: ; const S: ):Integer;           |
+|     | Last occurance of character in a string                                   |
+|  23 | function LeftStr( const S: ; Count: Integer ):;                           |
+|     | Get first N characters of a string                                        |
+|  24 | function LoadStr( Ident: Integer ):;                                      |
+|     | Load string from resources                                                |
+|  25 | function LowerCase( const s: ):; overload;                                |
+|     | Convert string to all-lowercase                                           |
+|  26 | function LowerCase( const V: variant ):; overload;                        |
+|     | Convert string to all-lowercase                                           |
+|  27 | function NewStr( const S: ):PString; overload;                            |
+|     | Allocate new string on heap                                               |
+|  28 | function RightStr( const S: ; Count: Integer ):;                          |
+|     | Get last N characters of a string                                         |
+|  29 | function StrAlloc( Size: Cardinal ):PChar;                                |
+|     | Allocate memory for string                                                |
+|  30 | function StrBufSize( Str: PChar ):SizeUInt;                               |
+|     | Reserve memory for a string                                               |
+|  31 | procedure StrDispose( Str: PChar );                                       |
+|     | Remove string from heap                                                   |
+|  32 | function StrPas( Str: PChar ):;                                           |
+|     | Convert PChar to pascal string                                            |
+|  33 | function StrPCopy( Dest: PChar; Source: ):PChar;                          |
+|     | Copy pascal string                                                        |
+|  34 | function StrPLCopy( Dest: PChar; Source: ; MaxLen: SizeUInt ):PChar;      |
+|     | Copy N bytes of pascal string                                             |
+|  35 | function UpperCase( const s: ):;                                          |
+|     | Convert string to all-uppercase                                           |
+|-----+---------------------------------------------------------------------------|
+
+** 数组array
+
+*** 一维数组
+#+BEGIN_SRC pascal
+type
+age = array [0..100] of integer;
+
+var
+   myage : age;
+
+var
+   youage : array [0..10] of integer;
+   i, j, k	  :  integer;
+
+begin
+   for i := 1 to 10 do
+      begin
+	 j := i * i + 1;
+	 youage[i] := j;
+      end;
+   for k := 1 to 10 do
+      writeln(youage[k]);
+   writeln(sizeof(youage));
+end.
+#+END_SRC
+
+#+BEGIN_SRC pascal
+{直接初始化}
+var
+    age = array [0..3] if integer = (1, 2, 3, 4);
+
+#+END_SRC
+
+*** 多维数组
+#+BEGIN_SRC pascal
+
+var
+   myarray : array [0..9, 0..3] of integer;
+   i, j	   : integer;
+
+begin
+   for i:= 0 to 9 do
+      for j := 0 to 3 do
+	 myarray[i,j] := i+j;
+
+   for i:= 0 to 9 do
+      begin
+	 for j := 0 to 3 do
+	    write(myarray[i,j]:2, ' ');
+	 writeln;
+      end;
+end.
+#+END_SRC
+
+*** 动态数组
+#+BEGIN_SRC pascal
+var
+   dynarray :  array of array of integer;  {申明二维数组，一维就是array of integer}
+
+
+begin
+   setlength(dynarray, 10, 4);
+   for i:= 0 to 9 do
+      for j := 0 to 3 do
+	dynarray[i,j] := i+j;
+
+   for i:= 0 to 9 do
+      begin
+	 for j := 0 to 3 do
+	    write(dynarray[i,j]:2, ' ');
+	 writeln;
+      end;
+end.
+#+END_SRC
+
+** 指针 
+#+BEGIN_SRC pascal
+
+var
+   number : integer;
+   iptr	  : ^integer;
+   f	  : ^word;		 {存储指针iptr的地址}
+
+begin
+   number := 10;
+   writeln(number);
+   iptr := @number;
+   iptr^ := 20;
+   writeln(number);
+   writeln(iptr^);
+   f := addr(iptr);		 {将地址的指针传给f}
+   writeln(f^);			 {打印f的引用值，即iptr的地址}
+end.
+#+END_SRC
+
+*** 空指针
+#+BEGIN_SRC pascal
+iptr := nil;{内存地址为0}
+
+{判断}
+if (iptr <> nill) then
+if (iptr == nill) then
+
+#+END_SRC
+*** 指针计算
+- 递增 Inc(ptr)
+- 递减 Dec(ptr)
+- 比较 ptr <= @arr
+*** 指针列表
+#+BEGIN_SRC pascal
+type
+    iptr : ^integer;
+
+type
+    ptr_array: array [1..10] of iptr;
+
+
+#+END_SRC
+#+BEGIN_SRC pascal
+program expointers;
+
+const max = 4;
+
+type
+   iptr = ^integer;
+
+var
+   age : array [0..max] of integer = (1,2,3,4,5);
+   ptr : array [0..max] of iptr;
+   i   : integer;
+
+begin
+   for i := 0 to max do
+      ptr[i] := @age[i];
+
+   for i := 0 to max do
+      writeln(ptr[i]^);
+
+end.
+#+END_SRC
+** 记录record
+类似一个结构体
+#+BEGIN_SRC pascal
+var
+Books : record
+   title: packed array [1..50] of char;
+   author: packed array [1..50] of char;
+   subject: packed array [1..100] of char;
+   book_id: integer;
+end;
+
+var
+    Book1, Book2: Books;
+
+procedure print_book(var book: Books);
+begin
+   writeln ('Book 1 title : ', book.title);
+   writeln('Book 1 author : ', book.author);
+   writeln( 'Book 1 subject : ', book.subject);
+   writeln( 'Book 1 book_id : ', book.book_id);
+   writeln; 
+end;
+
+begin
+   Book1.title  := 'C Programming';
+   Book1.author := 'Nuha Ali '; 
+   Book1.subject := 'C Programming Tutorial';
+   Book1.book_id := 6495407;
+
+   (* book 2 specification *)
+   Book2.title := 'Telecom Billing';
+   Book2.author := 'Zara Ali';
+   Book2.subject := 'Telecom Billing Tutorial';
+   Book2.book_id := 6495700;
+ 
+   (* print Book1 info *)
+   writeln ('Book 1 title : ', Book1.title);
+   writeln('Book 1 author : ', Book1.author);
+   writeln( 'Book 1 subject : ', Book1.subject);
+   writeln( 'Book 1 book_id : ', Book1.book_id);
+   writeln; 
+
+   print_book(book2)
+end.
+#+END_SRC
+
+*** 指向record的指针
+#+BEGIN_SRC pascal
+program exRecords;
+type
+BooksPtr = ^ Books;
+Books = record
+   title: packed array [1..50] of char;
+   author: packed array [1..50] of char;
+   subject: packed array [1..100] of char;
+   book_id: longint;
+end;
+
+var
+  (* Declare Book1 and Book2 of pointer type that refers to Book type *)
+   Book1, Book2: BooksPtr; 
+
+begin
+   new(Book1); {初始化指针}
+   new(book2);
+   
+   (* book 1 specification *)
+   Book1^.title  := 'C Programming';
+   Book1^.author := 'Nuha Ali '; 
+   Book1^.subject := 'C Programming Tutorial';
+   Book1^.book_id := 6495407;
+   
+   (* book 2 specification *)
+   Book2^.title := 'Telecom Billing';
+   Book2^.author := 'Zara Ali';
+   Book2^.subject := 'Telecom Billing Tutorial';
+   Book2^.book_id := 6495700;
+   
+   (* print Book1 info *)
+   writeln ('Book 1 title : ', Book1^.title);
+   writeln('Book 1 author : ', Book1^.author);
+   writeln( 'Book 1 subject : ', Book1^.subject);
+   writeln( 'Book 1 book_id : ', Book1^.book_id);
+   
+   (* print Book2 info *)
+   writeln ('Book 2 title : ', Book2^.title);
+   writeln('Book 2 author : ', Book2^.author);
+   writeln( 'Book 2 subject : ', Book2^.subject);
+   writeln( 'Book 2 book_id : ', Book2^.book_id);
+   
+   dispose(Book1); 
+   dispose(Book2);
+end.
+#+END_SRC
+*** with语法（减少"."的使用)
+#+BEGIN_SRC pascal
+with Book1 do
+begin
+    title := 'yangrui';
+    author:= 'yangr';
+end;
+#+END_SRC
+** 变种 variant(类似泛型)
+#+BEGIN_SRC pascal
+
+type
+   names = (yang, rui, pis);
+
+var
+   v : variant;
+
+var
+   i : integer;
+   d : real;
+   n :  names;
+
+begin
+   i := 1;
+   v := i;
+   writeln(v);
+   
+   d:= 1.1;
+   v := d;
+   writeln(v);
+
+   n := yang;
+   v := n;
+   writeln(v);
+end.
+
+#+END_SRC
+** 集合
+#+BEGIN_SRC pascal
+type
+Days = (mon, tue, wed, thu, fri, sat, sun);
+Letters = set of char;
+DaySet = set of days;
+Alphabets = set of 'A' .. 'Z';
+studentAge = set of 13..20;
+#+END_SRC
+
+
+| Operations   | Descriptions                                                                                                                                      |
+|--------------+---------------------------------------------------------------------------------------------------------------------------------------------------|
+| Union        | This joins two sets and gives a new set with members from both sets.                                                                              |
+| Difference   | Gets the difference of two sets and gives a new set with elements not common to either set.                                                       |
+| Intersection | Gets the intersection of two sets and gives a new set with elements common to both sets.                                                          |
+| Inclusion    | A set P is included in set Q, if all items in P are also in Q but not vice versa.                                                                 |
+| Symmetric    | difference  Gets the symmetric difference of two sets and gives a set of elements, which are in either of the sets and not in their intersection. |
+| In           | It checks membership.                                                                                                                             |
+
+** 文件处理
+#+BEGIN_SRC pascal
+type
+rfile = file of real;
+
+var
+realdata : rfile;
+num : real;
+
+begin
+Assign(realdata, 'real_data.dta');
+Rewrite(realdata);
+
+num := 100.1;
+Write(realdata, num);
+Close(realdata);
+end.
+
+#+END_SRC
+
+** 内存管理
+- 常规申明指针变量
+#+BEGIN_SRC pascal
+type
+   description : ^string;
+
+begin
+   new(description); {为指针分配内存}
+   ...
+   dispose(descriptopn);
+end.
+#+END_SRC
+- 自己申明变量内存，用getmem-freemem
+#+BEGIN_SRC pascal
+programe exMemory
+
+type
+   name : array [0..100] of char; 
+   description : ^string;
+
+{ at this time, you don't need a total string with 255 char, you just need 100 char }
+begin
+   description := getmem(100);	 {repalce command: new(description)}
+   if not assigned(description) then {检查指针是否有效}
+      writeln('error')
+   else
+      description^ := 'my name is ray';
+   
+   writeln(description^);
+   freemem(description);
+end.
+#+END_SRC
+- 自己申明内存时，重新分配内存，用reallmem
+#+BEGIN_SRC pascal
+description := reallmem(description, 200);
+description^ := 'new longer sentence';
+#+END_SRC
+
+** Unit(包)
+** 对象
+1. 在type里申明object以及对应的虚方法；
+#+BEGIN_SRC pascal
+
+type
+   rectangle = object
+   private
+      length, width:integer;
+   public
+      constructor init(l, w:integer);
+      destructor done;
+      procedure setlength(l : integer);
+      { function getlength():integer; }
+      procedure setwidth(w : integer);
+      { function setwidth(): integer; }
+      procedure draw;
+end;
+
+#+END_SRC
+
+2. 而后，我们在后面重写需方法，注意，构造函数和析构函数必须写，方法名称前面加上该对象
+#+BEGIN_SRC pascal
+constructor rectangle.init(l, w :integer );
+begin
+   self.length := l;{可加self，也可以不加}
+   self.width := w;
+end;
+
+destructor rectangle.done;
+begin
+   writeln('Rectangle Closed');
+end;
+      
+procedure rectangle.setlength(l :  integer);
+begin
+   length := l;
+end;
+#+END_SRC
+
+#+BEGIN_SRC pascal
+{对象初始化}
+var
+   r1:rectangle;
+
+begin
+   r1.init(3,4);
+   r1.draw;
+   r1.done;
+   
+   new(rptr, init(5,6));
+   rptr^.draw;
+   rptr^.init(7,8);
+   rptr^.draw;
+   rptr^.done;
+   dispose(rptr);
+
+   c1.init(2,3, 10);
+   c1.draw;
+   c1.setheight(5);
+   c1.draw;
+   c1.done;
+end.
+
+#+END_SRC
+3. 类指针初始化时用new方法：new(rptr, init(4,3)); 最后需要用dispose释放；
+
+4. 类的继承
+#+BEGIN_SRC pascal
+type
+   cube = object(rectangle)
+   private
+      height : integer;
+   public
+      procedure init(l, w, h : integer);{可以选择重写init函数，也可以不写}
+      procedure setheight(h: integer);
+      procedure draw;
+end;
+#+END_SRC
+
+** 类 
+由于pascal的object不参与多态，因此引入类。类是指向对象的指针，类被分配在堆上，而对象被分配在栈上。换句话说，当你申明object时，将会占用整个对象的空间，而当你申明class时，只占用一个指针的空间。
+
+- 申明
+#+BEGIN_SRC pascal
+{$mode objfpc} // directive to be used for defining classes
+{$m+}		   // directive to be used for using constructor
+
+program exClass;
+
+type
+   myclass = class
+   private
+      length, width, height : integer;
+   public
+      constructor create(l, w, h:integer);
+      procedure draw;
+end;
+
+
+constructor myclass.create(l, w, h:integer);
+begin
+   length := l;
+   width := w;
+   height := h;
+end;
+
+procedure myclass.draw;
+var
+   volume : integer;
+begin
+   volume := length * width * height;
+   writeln(volume);
+end;
+#+END_SRC
+
+- 实例化（有区别与object）
+#+BEGIN_SRC pascal
+
+var
+   temp	: myclass;
+   
+begin
+   temp := myclass.create(10,20,30);
+   temp.draw;
+   
+end.
+#+END_SRC
+
+- 继承
+#+BEGIN_SRC pascal
+program inheritanceExample;
+
+{$MODE OBJFPC} //directive to be used for creating classes
+{$M+} //directive that allows class constructors and destructors
+
+type
+   Books = Class 
+   protected 
+      title : String; 
+      price: real;
+   
+   public
+      constructor Create(t : String; p: real); //default constructor
+      
+      procedure setTitle(t : String); //sets title for a book
+      function getTitle() : String; //retrieves title
+      
+      procedure setPrice(p : real); //sets price for a book
+      function getPrice() : real; //retrieves price
+      {display 定义为虚方法，这样子类可以重写override}
+      procedure Display(); virtual; // display details of a book
+end;
+(* Creating a derived class *)
+
+type
+   Novels = Class(Books)
+   private
+      author: String;
+   
+   public
+      constructor Create(t: String); overload; {重载构造函数，当参数只有一个时}
+      constructor Create(a: String; t: String; p: real); overload;
+      
+      procedure setAuthor(a: String); // sets author for a book
+      function getAuthor(): String; // retrieves author name
+      
+      procedure Display(); override; {重写该方法}
+end;
+var
+   n1, n2: Novels;
+
+//default constructor 
+constructor Books.Create(t : String; p: real);
+begin
+   title := t;
+   price := p;
+end;
+
+procedure Books.setTitle(t : String); //sets title for a book
+begin
+   title := t;
+end;
+
+function Books.getTitle() : String; //retrieves title
+begin
+   getTitle := title;
+end;
+
+procedure Books.setPrice(p : real); //sets price for a book
+begin
+   price := p;
+end;
+
+function Books.getPrice() : real; //retrieves price
+begin
+   getPrice:= price;
+end;
+
+procedure Books.Display();
+begin
+   writeln('Title: ', title);
+   writeln('Price: ', price);
+end;
+
+(* Now the derived class methods  *)
+constructor Novels.Create(t: String);
+begin
+   inherited Create(t, 0.0);{重载}
+   author:= ' ';
+end;
+
+constructor Novels.Create(a: String; t: String; p: real);
+begin
+   inherited Create(t, p);
+   author:= a;
+end;
+
+procedure Novels.setAuthor(a : String); //sets author for a book
+begin
+   author := a;
+end;
+
+function Novels.getAuthor() : String; //retrieves author
+begin
+   getAuthor := author;
+end;
+
+procedure Novels.Display();
+begin
+   writeln('Title: ', title);
+   writeln('Price: ', price:5:2);
+   writeln('Author: ', author);
+end;
+
+begin 
+   n1 := Novels.Create('Gone with the Wind');
+   n2 := Novels.Create('Ayn Rand','Atlas Shrugged', 467.75);
+   n1.setAuthor('Margaret Mitchell');
+   n1.setPrice(375.99);
+   n1.Display;
+   n2.Display;
+end.
+#+END_SRC
+
+** DONE 接口
+** TODO 虚类
+** DONE 静态方法
+DEADLINE: <2017-11-08 周三>
+
+#+BEGIN_SRC pascal
+program StaticExample;
+{$mode objfpc}
+{$static on}
+type
+   myclass=class
+      num : integer;static;
+   end;
+var
+   n1, n2 : myclass;
+begin
+   n1:= myclass.create;
+   n2:= myclass.create;
+   n1.num := 12;
+   writeln(n2.num);
+   n2.num := 31;
+   writeln(n1.num);
+   writeln(myclass.num);
+   myclass.num := myclass.num + 20;
+   writeln(n1.num);
+   writeln(n2.num);
+end.
+#+END_SRC
+
+
+JOE
+JOE
+JOE
+JOE

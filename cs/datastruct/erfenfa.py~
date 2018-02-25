@@ -1,0 +1,22 @@
+# 第二题
+# 二分法求数值解
+from functools import reduce
+
+func = lambda r: reduce(lambda x, y: x+y, map(lambda k: 60.0 / (1 + r)**k, range(1, 8))) + 1000.0/(1+r)**7
+
+print(func(0.28))
+v = 750
+delta = 1000
+delta_target = 0.0001
+r = 0.04
+r_bound = [0, 1]
+
+while delta > delta_target:
+    y_1 = func(r)
+    if v < y_1:
+        r, r_bound[0] = (r+r_bound[1]) / 2, r
+    else:
+        r, r_bound[1] = (r + r_bound[0]) / 2, r
+    delta = y_1 - v
+    
+print(r, v)

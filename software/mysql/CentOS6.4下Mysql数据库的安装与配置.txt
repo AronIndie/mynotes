@@ -1,0 +1,279 @@
+
+如果要在Linux上做j2ee开发，首先得搭建好j2ee的开发环境，包括了jdk、tomcat、eclipse的安装(这个在之前的一篇随笔中已经有详细讲解了 Linux学习之CentOS(七)--CentOS下j2ee环境搭建 ),如果要开发web项目，我们当然可以安装一个myeclipse到Linux系统上去，这个安装方法和安装eclipse完全相同，就没有记录下来了，有了jdk、tomcat、eclipse我们就已经能进行我们的程序开发了，但是如果要做一个项目，哪怕是小的不能再小的项目都离不开数据的存储呀！！！没错，咱们还差一个最重要的软件没有装，也就是数据库！！！如果没有了数据库，咱们做项目简直是空想，所以呢，对于数据库安装这块，专门为安装mysql数据库写了这篇随笔。。。。。。
+
+一、mysql简介
+
+说到数据库，我们大多想到的是关系型数据库，比如mysql、oracle、sqlserver等等，这些数据库软件在windows上安装都非常的方便，在Linux上如果要安装数据库，咱不得不首先推荐的是mysql数据库了，而且Mysql数据库的第一个版本就是发行在Linux系统上的。
+
+MySQL是一个关系型数据库管理系统，由瑞典MySQL AB公司开发，目前属于Oracle公司。MySQL是一种关联数据库管理系统，关联数据库将数据保存在不同的表中，而不是将所有数据放在一个大仓库内，这样就增加了速度并提高了灵活性。MySQL的SQL语言是用于访问数据库的最常用标准化语言。MySQL软件采用了双授权政策（本词条“授权政策”），它分为社区版和商业版，由于其体积小、速度快、总体拥有成本低，尤其是开放源码这一特点，一般中小型网站的开发都选择MySQL作为网站数据库。由于其社区版的性能卓越，搭配PHP和Apache可组成良好的开发环境。
+
+在Linux上安装mysql数据库，我们可以去其官网上下载mysql数据库的rpm包， http://dev.mysql.com/downloads/mysql/5.6.html#downloads ，大家可以根据自己的操作系统去下载对应的数据库文件，目前最新的版本是5.6.10了。
+
+在这里我是通过yum来进行mysql数据库的安装的，通过这种方式进行安装，可以将跟mysql相关的一些服务、jar包都给我们安装好，所以省去了很多不必要的麻烦！！！
+
+二、卸载掉原有mysql
+
+因为mysql数据库在Linux上实在是太流行了，所以目前下载的主流Linux系统版本基本上都集成了mysql数据库在里面，我们可以通过如下命令来查看我们的操作系统上是否已经安装了mysql数据库
+[root@xiaoluo ~]# rpm -qa | grep mysql　　// 这个命令就会查看该操作系统上是否已经安装了mysql数据库
+
+有的话，我们就通过 rpm -e 命令 或者 rpm -e --nodeps 命令来卸载掉
+[root@xiaoluo ~]# rpm -e mysql　　// 普通删除模式
+[root@xiaoluo ~]# rpm -e --nodeps mysql　　// 强力删除模式，如果使用上面命令删除时，提示有依赖的其它文件，则用该命令可以对其进行强力删除
+
+在删除完以后我们可以通过 rpm -qa | grep mysql 命令来查看mysql是否已经卸载成功！！
+
+三、通过yum来进行mysql的安装
+
+我是通过yum的方式来进行mysql的数据库安装，首先我们可以输入 yum list | grep mysql 命令来查看yum上提供的mysql数据库可下载的版本：
+[root@xiaoluo ~]# yum list | grep mysql
+
+就可以得到yum服务器上mysql数据库的可下载版本信息：
+
+ 
+
+
+
+ 
+
+然后我们可以通过输入  yum install -y mysql-server mysql mysql-devel 命令将mysql mysql-server mysql-devel都安装好( 注意:安装mysql时我们并不是安装了mysql客户端就相当于安装好了mysql数据库了，我们还需要安装mysql-server服务端才行 )
+
+ 
+[root@xiaoluo ~]# yum install -y mysql-server mysql mysql-deve
+
+ 
+
+在等待了一番时间后，yum会帮我们选择好安装mysql数据库所需要的软件以及其它附属的一些软件
+
+ 
+
+
+ 
+
+我们发现，通过yum方式安装mysql数据库省去了很多没必要的麻烦，当出现下面的结果时，就代表mysql数据库安装成功了
+
+ 
+
+
+
+ 
+
+此时我们可以通过如下命令，查看刚安装好的mysql-server的版本
+
+ 
+[root@xiaoluo ~]# rpm -qi mysql-server
+
+ 
+
+我们安装的mysql-server并不是最新版本，如果你想尝试最新版本，那就去mysql官网下载rpm包安装就行了，至此我们的mysql数据库已经安装完成了。
+
+四、mysql数据库的初始化及相关配置
+
+我们在安装完mysql数据库以后，会发现会多出一个mysqld的服务，这个就是咱们的数据库服务，我们通过输入 service mysqld start 命令就可以启动我们的mysql服务。
+
+注意 ：如果我们是第一次启动mysql服务，mysql服务器首先会进行初始化的配置，如：
+
+
+[root@xiaoluo ~]# service mysqld start
+
+初始化 MySQL 数据库： WARNING: The host &#39;xiaoluo&#39; could not be looked up with resolveip.
+This probably means that your libc libraries are not 100 % compatible
+with this binary MySQL version. The MySQL daemon, mysqld, should work
+normally with the exception that host name resolving will not work.
+This means that you should use IP addresses instead of hostnames
+when specifying MySQL privileges !
+Installing MySQL system tables...
+OK
+Filling help tables...
+OK
+
+To start mysqld at boot time you have to copy
+support-files/mysql.server to the right place for your system
+
+PLEASE REMEMBER TO SET A PASSWORD FOR THE MySQL root USER !
+To do so, start the server, then issue the following commands:
+
+/usr/bin/mysqladmin -u root password &#39;new-password&#39;
+/usr/bin/mysqladmin -u root -h xiaoluo password &#39;new-password&#39;
+
+Alternatively you can run:
+/usr/bin/mysql_secure_installation
+
+which will also give you the option of removing the test
+databases and anonymous user created by default.  This is
+strongly recommended for production servers.
+
+See the manual for more instructions.
+
+You can start the MySQL daemon with:
+cd /usr ; /usr/bin/mysqld_safe &
+
+You can test the MySQL daemon with mysql-test-run.pl
+cd /usr/mysql-test ; perl mysql-test-run.pl
+
+Please report any problems with the /usr/bin/mysqlbug script!
+
+                                                           [确定]
+正在启动 mysqld：                                            [确定]
+
+
+
+ 
+
+这时我们会看到第一次启动mysql服务器以后会提示非常多的信息，目的就是对mysql数据库进行初始化操作，当我们再次重新启动mysql服务时，就不会提示这么多信息了，如：
+
+ 
+[root@xiaoluo ~]# service mysqld restart
+停止 mysqld：                                             [确定]
+正在启动 mysqld：                                          [确定]
+
+ 
+
+我们在使用mysql数据库时，都得首先启动mysqld服务，我们可以 通过  chkconfig --list | grep mysqld 命令来查看mysql服务是不是开机自动启动，如：
+
+ 
+[root@xiaoluo ~]# chkconfig --list | grep mysqld
+mysqld             0:关闭    1:关闭    2:关闭    3:关闭    4:关闭    5:关闭    6:关闭
+
+ 
+
+我们发现mysqld服务并没有开机自动启动，我们当然可以通过 chkconfig mysqld on 命令来将其设置成开机启动，这样就不用每次都去手动启动了
+
+ 
+[root@xiaoluo ~]# chkconfig mysqld on
+[root@xiaoluo ~]# chkconfig --list | grep mysql
+mysqld             0:关闭    1:关闭    2:启用    3:启用    4:启用    5:启用    6:关闭
+
+ 
+
+mysql数据库安装完以后只会有一个root管理员账号，但是此时的root账号还并没有为其设置密码，在第一次启动mysql服务时，会进行数据库的一些初始化工作，在输出的一大串信息中，我们看到有这样一行信息 ：
+
+ 
+/usr/bin/mysqladmin -u root password &#39;new-password&#39;　　// 为root账号设置密码
+
+ 
+
+所以我们可以通过 该命令来给我们的root账号设置密码( 注意 ： 这个root账号是mysql的root账号，非Linux的root账号 )
+
+ 
+[root@xiaoluo ~]# mysqladmin -u root password &#39;root&#39;　　// 通过该命令给root账号设置密码为 root
+
+ 
+
+此时我们就可以通过 mysql -u root -p 命令来登录我们的mysql数据库了
+
+ 
+
+
+
+五、mysql数据库的主要配置文件
+
+1. /etc/my.cnf 这是mysql的主配置文件
+
+我们可以查看一下这个文件的一些信息
+
+
+[root@xiaoluo etc]# ls my.cnf 
+my.cnf
+[root@xiaoluo etc]# cat my.cnf 
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+
+
+2. /var/lib/mysql    mysql数据库的数据库文件存放位置
+
+我们的mysql数据库的数据库文件通常是存放在了/ver/lib/mysql这个目录下
+
+ 
+
+
+[root@xiaoluo ~]# cd /var/lib/mysql/
+[root@xiaoluo mysql]# ls -l
+总用量 20488
+-rw-rw----. 1 mysql mysql 10485760 4月   6 22:01 ibdata1
+-rw-rw----. 1 mysql mysql  5242880 4月   6 22:01 ib_logfile0
+-rw-rw----. 1 mysql mysql  5242880 4月   6 21:59 ib_logfile1
+drwx------. 2 mysql mysql     4096 4月   6 21:59 mysql　　// 这两个是mysql数据库安装时默认的两个数据库文件
+srwxrwxrwx. 1 mysql mysql        0 4月   6 22:01 mysql.sock
+drwx------. 2 mysql mysql     4096 4月   6 21:59 test　　// 这两个是mysql数据库安装时默认的两个数据库文件
+
+
+
+ 
+
+我们可以自己创建一个数据库，来验证一下该数据库文件的存放位置
+
+ 
+
+
+创建一个我们自己的数据库：
+mysql> create database xiaoluo;
+Query OK, 1 row affected (0.00 sec)
+
+[root@xiaoluo mysql]# ls -l
+总用量 20492
+-rw-rw----. 1 mysql mysql 10485760 4月   6 22:01 ibdata1
+-rw-rw----. 1 mysql mysql  5242880 4月   6 22:01 ib_logfile0
+-rw-rw----. 1 mysql mysql  5242880 4月   6 21:59 ib_logfile1
+drwx------. 2 mysql mysql     4096 4月   6 21:59 mysql
+srwxrwxrwx. 1 mysql mysql        0 4月   6 22:01 mysql.sock
+drwx------. 2 mysql mysql     4096 4月   6 21:59 test
+drwx------. 2 mysql mysql     4096 4月   6 22:15 xiaoluo　　// 这个就是我们刚自己创建的xiaoluo数据库
+[root@xiaoluo mysql]# cd xiaoluo/
+[root@xiaoluo xiaoluo]# ls
+db.opt
+
+
+
+3. /var/log mysql数据库的日志输出存放位置
+
+我们的mysql数据库的一些日志输出存放位置都是在/var/log这个目录下
+
+
+[root@xiaoluo xiaoluo]# cd 
+[root@xiaoluo ~]# cd /var/log
+[root@xiaoluo log]# ls
+amanda                cron           maillog-20130331   spice-vdagent.log
+anaconda.ifcfg.log    cron-20130331  mcelog             spooler
+anaconda.log          cups           messages           spooler-20130331
+anaconda.program.log  dirsrv         messages-20130331  sssd
+anaconda.storage.log  dmesg          mysqld.log         tallylog
+anaconda.syslog       dmesg.old      ntpstats           tomcat6
+anaconda.xlog         dracut.log     piranha            wpa_supplicant.log
+anaconda.yum.log      gdm            pm-powersave.log   wtmp
+audit                 httpd          ppp                Xorg.0.log
+boot.log              ibacm.log      prelink            Xorg.0.log.old
+btmp                  lastlog        sa                 Xorg.1.log
+btmp-20130401         libvirt        samba              Xorg.2.log
+cluster               luci           secure             Xorg.9.log
+ConsoleKit            maillog        secure-20130331    yum.log
+
+
+
+ 
+
+其中mysqld.log 这个文件就是我们存放我们跟mysql数据库进行操作而产生的一些日志信息，通过查看该日志文件，我们可以从中获得很多信息
+
+ 
+
+因为我们的mysql数据库是可以通过网络访问的，并不是一个单机版数据库，其中使用的协议是 tcp/ip 协议，我们都知道mysql数据库绑定的端口号是 3306 ，所以我们可以通过 netstat -anp 命令来查看一下，Linux系统是否在监听 3306 这个端口号：
+
+
+
+结果如上所示，Linux系统监听的3306端口号就是我们的mysql数据库！！！！
+
+ 
+
+本篇随笔详细记录了在CentOS6.4下通过yum安装mysql数据库以及对数据库进行基本配置，在后续的Linux学习中将会坚持记录自己的心得以及体会！！！！
+
+坚持就是胜利！！！！！！！！！！
+
+ 

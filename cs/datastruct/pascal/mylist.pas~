@@ -1,0 +1,15 @@
+   program mylists;
+
+      type
+	 mylist = class
+	    
+
+	    Var
+	       Myapple : apple = 10;
+
+   var
+      stri
+
+   begin
+      writeln(myapple);
+   end.

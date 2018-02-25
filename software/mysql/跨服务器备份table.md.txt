@@ -1,0 +1,17 @@
+
+本地登录远程服务器并复制aqi数据库中的所有表为bak.sql
+
+
+```bash
+
+$ mysqldump -h 104.194.84.120 -u root -p aqi>bak.sql
+
+```
+
+本地登录本地服务器导入bak.sql至数据库aqi
+
+```bash
+
+$ mysql -u root -p aqi<bak.sql
+
+```
