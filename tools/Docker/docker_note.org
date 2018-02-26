@@ -1,0 +1,61 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: Docker Notes
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: docker
+#+OPTIONS: H:4 toc:t 
+
+* Docker简单认识
+
+ref: https://yq.aliyun.com/articles/63035?utm_campaign=wenzhang&utm_medium=article&utm_source=QQ-qun&utm_content=m_7538
+
+
+** docker组成成分
+
+*** docker client
+
+docker提供给用户的客户端，用户在其上面下达指令，来管理本地或者远程服务器。
+
+*** docker daemon
+
+docker服务守护进程，运行在装有docker环境的后台，只会接受docker client 发来的指令，并对服务器进行具体的操作。
+
+*** docker images
+
+类似一个只读的CD，装有我们所需的系统（主要是系统）、应用、程序等等，可以比作git里面的一个 *repositroy*
+
+*** docker registry
+
+是Docker Images的仓库，就像git的仓库一样，用来管理Docker镜像的，提供了Docker镜像的上传、下载和浏览等功能
+
+*** docker container
+
+docker的容器，是docker最关键的东西。是真正跑项目程序、消耗机器资源、提供服务的地方，Docker Container通过Docker Images启动，在Docker Images的基础上运行你需要的代码。
+
+可以认为Docker Container提供了系统硬件环境，然后使用了Docker Images这些制作好的系统盘，再加上你的项目代码，跑起来就可以提供服务了
+
+
+
+** docker 运行流程
+
+[[file:pics/pci1.png]]
+
+1. 安装docker url: https://www.docker.com/community-edition
+
+2. 通过终端运行docker：
+   - 查看docker版本 $ docker version
+   - 查看当前拥有哪些images $ docker images
+   - 查看当前正在运行哪些container $ docker ps
+   - 查看当前所有container $ docker ps -a
+
+注意： 
+- images来自registry，是从registry上pull下来的
+- 一个image可以产生多个containers，我们运行的都是conainer
+
+3. 从docker hub的registry上下载第一个image $ docker pull ubuntu  (ubuntu是image的name)
+
+4. 简单的将image放到container里跑起来 $ docker run ubuntu (包括了一个create 和 start，image里面的程序执行完这个container就自动关闭了)
+
+
