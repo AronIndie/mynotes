@@ -1,0 +1,32 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: Spark Note
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: 
+#+OPTIONS: H:4 toc:t 
+
+
+* Spark 初探
+
+** 在docker上运行spark
+ref: http://blog.csdn.net/cyh_24/article/details/49683221
+
+*** windows
+
+- 从 http://get.daocloud.io 下载docker-toolbox *注意不是docker for windiows*  (安装的时候把kitematic也勾上.)
+- 打开kitematic, 如果运行没有成功, 勾上"运行在virtual box中". 重试
+- 在kitematic的仓库中搜索spark. 选一个合适的版本, 点create.安装完了会自动运行
+- 点上面的'Exec'的按钮.然后你就得到了一个Linux shell, 可以直接跑spark-shell之类的命令了.
+
+为了更方便的使用pyspark，需要给服务器安装ipython，如果是yum，则使用：
+- yum -y install epel-release (更新软件列表，添加软件源）
+- yum -y install python-pip (安装pip)
+- pip install ipython==1.2.1 (指定版本，防止版本不匹配报错)
+
+进spark安装目录下，运行 $ IPYTHON=1 ./bin/pyspark ，表示用ipython启动pyspark（只针对spark<2.0的版本），如果是2.0以上的版本，则参考我的博客。
+
+
+*** linux
+ coming soon...
