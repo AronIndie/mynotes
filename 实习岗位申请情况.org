@@ -1,0 +1,91 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: 实习岗位申请情况
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: 
+#+OPTIONS: H:4 toc:t 
+
+
+* 普通实习
+
+** DONE 华院数据
+https://www.lagou.com/jobs/2773621.html?source=delivered&i=delivered-0
+
+** DONE BotHub
+https://www.lagou.com/jobs/3829349.html?source=delivered&i=delivered-1
+
+** DONE 小红书
+https://www.lagou.com/jobs/3132273.html?source=delivered&i=delivered-2
+
+** DONE musical.ly
+https://www.lagou.com/jobs/2605714.html?source=delivered&i=delivered-3
+
+** DONE Kyligence
+- State "DONE"       from ""           [2018-02-28 周三 14:20]
+https://www.lagou.com/jobs/4019786.html?source=delivered&i=delivered-4
+** DONE bilibili
+- State "DONE"       from ""           [2018-02-28 周三 14:20]
+https://www.lagou.com/jobs/1515330.html?source=delivered&i=delivered-5
+** DONE 七牛云
+- State "DONE"       from ""           [2018-02-28 周三 14:20]
+https://www.lagou.com/jobs/3322646.html?source=delivered&i=delivered-6
+** DONE 达观数据
+- State "DONE"       from ""           [2018-02-28 周三 14:20]
+https://www.lagou.com/jobs/4066733.html?source=delivered&i=delivered-7
+** TODO 携程
+=刚哥内推=
+- 数据智能部 ： 机器学习实习生
+
+** TODO 百度
+上海_策略（机器学习/数据挖掘）实习生
+https://www.shixiseng.com/intern/inn_xv8gex1kbcce
+
+** TODO 平安科技
+机器学习工程师实习生
+https://www.shixiseng.com/intern/inn_gejpg3qqyjdb
+
+数据分析实习生
+https://www.shixiseng.com/intern/inn_mhdggiu9ctue
+
+** TODO 阿里
+算法工程师-机器学习
+https://campus.alibaba.com/traineePositions.htm?refno=11901
+
+** DONE 麦穗
+https://www.lagou.com/gongsi/192933.html
+** TODO 阿里巴巴优酷事业部
+【求帮转 能留用】
+阿里巴巴优酷事业部招收大数据方向实习生，要求19年毕业，本科硕士生均可，编程能力要强，如果简历优秀可以直接内推。欢迎有意向的师兄师姐联系我~
+邮箱 chuanqi.wcq@alibaba-inc.com
+微信 wanchuanqi2011
+
+** TODO 竹间智能 
+- State "TODO"       from ""           [2018-02-28 周三 17:35]
+** TODO 第四范式
+- State "TODO"       from ""           [2018-02-28 周三 17:35]
+** TODO 蔚来汽车
+- State "TODO"       from ""           [2018-02-28 周三 17:35]
+
+
+* 暑期实习
+
+** TODO 京东春季实习生
+http://campus.jd.com/web/talk/index?t=4
+
+** TODO paypal
+数据科学家实习
+http://www.hotjob.cn/wt/PAYPAL/web/index?brandCode=1
+
+** TODO 携程
+http://recruitment.ctrip.com/list?year=2019
+
+** TODO 美团点评
+（尚未开始）
+http://campus.meituan.com/#/
+
+** TODO 蚂蚁金服
+机器学习实习生
+1. 内推
+2. 简历发送至antcampus@alipay.com， 邮件主题格式：应聘职位+学校+姓名+手机号

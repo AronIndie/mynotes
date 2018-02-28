@@ -37,7 +37,7 @@ all-spark-notebook  https://hub.docker.com/r/jupyter/all-spark-notebook/
 *** linux
  coming soon...
 
-
+ 
 ** 术语定义
 
 - Application : 用户编写的应用程序，Spark中最大的单元，包含了一个Driver和分布在集群多个节点上运行的Executor代码
@@ -338,3 +338,35 @@ rdd.sortByKey(ascending=True, numpartition=None, keyfunc=lambda x: str(x))
 3. lookup(key) 返回给定键对应的所有值
 
 ** 数据读取与保存
+
+略
+
+** Spark sql
+
+此处主要讲 spark dataframe ，spark中数据框是基于spark sql的，需要引入 相关的处理单元
+
+=pandas 和 spark df 的转换=
+#+BEGIN_SRC python
+# pandas 转 spark
+
+import pandas as pd
+from pyspark.sql import SparkSession, SQLContext
+
+ss = SparkSession(sc).Builder().appName('test_df').getOrCreate()
+
+df_spark = ss.createDataFrame([  
+    (0.0, "I like Spark"),  
+    (1.0, "Pandas is useful"),  
+    (2.0, "They are coded by Python ")  
+    ], ["label", "sentence"])  
+
+df_spark.select('label').show()
+
+df_pandas = df_spark.toPandas()
+
+sqlContext = SQLContext(sc)
+df_spark2 = sqlContext.createDataFrame(df_pandas)
+
+df_spark2.collect()
+#+END_SRC
+
