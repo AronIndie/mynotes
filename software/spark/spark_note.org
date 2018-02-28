@@ -10,7 +10,7 @@
 
 * Spark 初探
 
-** 在docker上运行spark
+** 在docker上运行spark（pull现成的image)
 ref: http://blog.csdn.net/cyh_24/article/details/49683221
 
 *** windows
@@ -25,8 +25,316 @@ ref: http://blog.csdn.net/cyh_24/article/details/49683221
 - yum -y install python-pip (安装pip)
 - pip install ipython==1.2.1 (指定版本，防止版本不匹配报错)
 
+=ipython + spark=
 进spark安装目录下，运行 $ IPYTHON=1 ./bin/pyspark ，表示用ipython启动pyspark（只针对spark<2.0的版本），如果是2.0以上的版本，则参考我的博客。
 
 
+=推荐的spark容器=
+
+all-spark-notebook  https://hub.docker.com/r/jupyter/all-spark-notebook/
+直接得到notebook，在本地输入token后即可使用
+
 *** linux
  coming soon...
+
+
+** 术语定义
+
+- Application : 用户编写的应用程序，Spark中最大的单元，包含了一个Driver和分布在集群多个节点上运行的Executor代码
+
+- Driver : 运行Application的main()函数，并且创建SparkContext，负责和ClusterManager通信，申请资源，分配任务和监控，在Excutor运行完之后，SparkContext被关闭。 ~通常用SparkContext代表Driver~
+
+- Executor : Application运行在worker节点的进程，负责运行task，并将数据存在内存或者磁盘上。
+
+- Cluster Manager : 在集群上获取资源的外部服务，目前有：
+  - standalone : Spark原生的资源管理，由Master负责资源的分配
+  - Hadoop Yarn : 由YARN中的ResourceManager负责资源的分配
+
+- Worker : 集群中任何可以运行Application代码的节点
+- Job : 一个RDD触发的动作，比如一次Count()
+- Stage : 一个job会被切分成多个Stage，各个stage会按照顺序执行
+- Task : Stage下的一个任务执行单元，一个RDD有几个partion，每个stage都会有多少task(平均)
+
+
+** spark 架构
+
+ref: https://www.cnblogs.com/tgzhu/p/5818374.html
+
+*** Spark 核心 : RDD
+
+弹性分布式数据集
+
+运行框架如下：
+
+[[file:pics/rdd_run.png]]
+
+
+=RDD五个特征=
+
+- dependencies:建立RDD的依赖关系，主要rdd之间是宽窄依赖的关系，具有窄依赖关系的rdd可以在同一个stage中进行计算。
+- partition：一个rdd会有若干个分区，分区的大小决定了对这个rdd计算的粒度，每个rdd的分区的计算都在一个单独的任务中进行。
+- preferedlocations:按照“移动数据不如移动计算”原则，在spark进行任务调度的时候，优先将任务分配到数据块存储的位置
+- compute：spark中的计算都是以分区为基本单位的，compute函数只是对迭代器进行复合，并不保存单次计算的结果。
+- partitioner：只存在于（K,V）类型的rdd中，非（K,V）类型的partitioner的值就是None。
+
+
+=宽窄依赖=
+- 窄依赖 ： 窄依赖是指父RDD的每个分区只被子RDD的一个分区所使用，子RDD分区通常对应常数个父RDD分区
+- 宽依赖 ： 宽依赖是指父RDD的每个分区都可能被多个子RDD分区所使用，子RDD分区通常对应所有的父RDD分区
+
+[[file:pics/narrow_wide_dep.png]]
+
+- 窄依赖的函数有：map, filter, union, join(父RDD是hash-partitioned ), mapPartitions, mapValues 
+- 宽依赖的函数有：groupByKey, join(父RDD不是hash-partitioned ), partitionBy
+
+~窄依赖相对于宽依赖，对优化更加有利~
+比如宽依赖的子rdd丢失（节点故障）时，spark会对其依赖的多个父节点重新计算，就产生了冗余计算
+
+*** spark 架构
+
+- spark没有自己的文件系统，一般需要机遇hadoop的HDFS文件系统
+- spark的计算框架要优于 hadoop的map-reduce，快10倍以上
+
+[[file:pics/frame.png]]
+
+
+- spark SQL ： HiveQl 与 spark进行交互的API
+- spark Streaming : 对实时数据流的处理和控制，允许程序能够像普通RDD一样处理实时数据
+- MLib : 机器学习库，算法均被实现为对RDD的spark操作
+- GraphX : 控制图，并行图操作和计算
+
+*** spark 运行流程
+
+[[file:pics/schedule.png]]
+
+1. 构建Spark Application的运行环境，启动SparkContext
+2. SparkContext向资源管理器（可以是Standalone，Mesos，Yarn）申请运行Executor资源，并启动StandaloneExecutorbackend，
+3. Executor向SparkContext申请Task
+4. SparkContext将应用程序分发给Executor
+5. SparkContext构建成DAG图，将DAG图分解成Stage、将Taskset发送给Task Scheduler，最后由Task Scheduler将Task发送给Executor运行
+6. Task在Executor上运行，运行完释放所有资源
+
+*** DAGschedule
+
+DAGschedule 是根据Job构建的基于Stage的有向无环图(DAG)，并提交给stage的Taskschedule
+
+[[file:pics/run_frame.png]]
+
+
+- Job=多个stage，Stage=多个同种task, Task分为ShuffleMapTask和ResultTask，Dependency分为ShuffleDependency和NarrowDependency
+- 在不同运行模式中任务调度器具体为：
+  - Spark on Standalone模式为TaskScheduler
+  - YARN-Client模式为YarnClientClusterScheduler
+  - YARN-Cluster模式为YarnClusterScheduler
+
+
+
+*** 运行模式
+
+**** 本地模式
+**** standalone（独立集群模式）
+- spark自带的资源调度框架
+- 采用Master/Slaves的典型架构，选用ZooKeeper来实现Master的HA
+
+**** Yarn
+
+
+*** 一些问题
+
+**** 内存有限情况下，spark如何处理上Tb的数据
+ref https://www.zhihu.com/question/23079001/answer/23569986
+  
+* Spark 语法
+
+** 简介
+
+*** pyspark运行的两种方式
+
+1. 交互式：直接打开./bin/pyspark
+2. 脚本式：需要借助./bin/spark-submit 脚本来运行
+
+*** SparkContext初始化
+
+1. 直接调用
+#+BEGIN_SRC python
+import pyspark
+sc = pyspark.SparkContext('local[*]')
+#+END_SRC
+
+2. 通过先创建一个SparkConf来初始化
+#+BEGIN_SRC python
+from pyspark import SparkConf, SparkContext
+conf = SparkConf().setMaster("local").setAppName("My App Name")
+sc = SparkContext(conf=conf)
+#+END_SRC
+
+其中 "local"表示本地运行，单机单线程，如果需要连接集群在应当在此输入集群url
+~注意，两种方法不可同时在一个程序内调用，否则会报错~
+
+*** 构建独立应用
+
+编写好程序之后，需要打包一个完整的应用，此时一般选用Java或者Scala，通过 ~Maven~ 或者 ~sbt~ 进行构建
+
+** RDD编程
+
+RDD: 弹性分布式数据集，不可变的分布式对象
+=创建RDD的方法=
+
+1. 读取一个外部数据集 (sc.textFile('filename')，等等)
+2. 在驱动器程序里分发驱动器程序中的对象集合（比如list 和 set）
+
+
+
+=RDD持久化=
+
+RDD会在每次对他进行 ~行动~ 操作时重新计算，如果想在多个操作行动中重复使用同一个RDD，可以使用 RDD.persist()，将其缓存下来
+
+
+*** 创建RDD
+
+创建RDD最简单的方法是 SparkContext.parallelize()
+#+BEGIN_SRC python
+lines = sc.parallelize(['pandas', 'shit', 'sklearn'])
+#+END_SRC
+
+*** 操作RDD
+
+=RDD的两种操作=
+- 转化操作，transform。 包括了filter，map等等，仍然返回一个RDD
+- 行动操作，action。包括了first等等，返回求得的值
+
+操作特点： ~惰性求值~
+
+*** 向spark中传递函数
+
+1. 通过 lambda 表达式
+
+#+BEGIN_SRC python
+word_filter = rdd.filter(lambda s: 'error' in s)
+#+END_SRC
+
+2. 通过自定义函数
+#+BEGIN_SRC python
+def have_error(word):
+    if 'error' in word:
+        return False
+    return True
+word_filter = rdd.filter(have_error)
+#+END_SRC
+
+~注意，python会将函数所在的对象也传递进去~
+当在类方法里添加rdd，且以另一个bool方法作为传递函数时(rdd.filter(self.have_error))
+或者是传递函数中包括类属性时(rdd.filter(lambda x:self.error in x))，self同样也会被传进去
+解决方法：将需要的字段拿出来放到局部变量中
+
+*** 常用RDD
+
+**** 针对各个元素的转化操作
+
+- map
+- filter
+- flagmap
+
+**** 伪集合操作
+
+RDD中的元素可以进行伪集合操作
+
+- RDD.distinct() 去重
+- RDD.union(RDD2) 加在一起（不是并集）
+- RDD.intersection(RDD2) 交集 性能较差
+- RDD.substract(RDD2) 差集
+- RDD.cartesian(RDD2) 笛卡尔积 （两两配对）
+
+**** 行动操作
+
+- collect() 所有元素
+- first()
+- take(n) 第n个元素
+- top(n) 前几个元素
+- 
+
+- reduce，接受一个函数，类似python reduce
+- folder， 接受一个函数和一个初始值，比如进行累加，初始值就是0
+- aggregate，初始值+累加函数+rdd合并函数
+- countByValue，元素统计个数
+- foreach，+函数，对每个元素使用给定函数
+
+** 键值对操作
+
+键值对RDD通常用来进行聚合，一般要先通过一些初始ETL(抽取，转化，装载)操作来将数据转化为键值对的形式。
+
+*** 键值对创建
+
+通过map构建二元组
+
+*** 转化操作
+- reduceByKey 合并具有相同键的值
+- groupByKey 对具有相同键的值进行分组 (1,3), (1,2) => (1, [2,3])
+- combineByKey 后面再说
+- mapValues(lambda x: x + 1) 对每个pair的值进行操作
+- flatMapValue 略
+- keys， RDD.keys 获取包含所有key的rdd
+- values() 获取包含所有值得rdd
+- sortByKey() 获取根据键排序的rdd
+
+- RDD1.subtractByKey(RDD2) 删除RDD1中与RDD2相同的键
+- RDD1.join(RDD2) 内连接
+- RDD1.rightOuterJoin(RDD2) 右外连接
+- RDD1.leftOuterJoin(RDD2) 左外连接
+- RDD1.cogroup(RDD2) 外连接， 可以接收多个RDD参数
+
+**** 聚合操作
+
+例1 求每个键对应值的平均值
+
+#+BEGIN_SRC python
+pairs = sc.parallelize([('a', 1), ('b', 2), ('a', 3)])
+
+counts = pairs.mapValues(lambda x: (x, 1))
+
+joins = counts.reduceByKey(lambda x1, x2: (x1[0] + x2[0], x1[1] + x2[1]))
+
+means = joins.mapValues(lambda x: x[0] / x[1])
+
+means.collect()
+#+END_SRC
+
+#+BEGIN_SRC python
+# 或者直接用聚合函数实现： combineByKey()
+
+combines = pairs.combineByKey((lambda x: (x, 1)),                        # 初始化操作
+                              (lambda x, y: (x[0] + y, x[1] + 2)),       # 遇到相同键时候的操作
+                              (lambda x, y: (x[0] + y[0], x[1] + y[1]))) # 所有分区聚合的操作
+#+END_SRC
+
+
+
+**** 分组操作
+
+#+BEGIN_SRC python
+RDD.reduceByKey(lambda x, y: x+y)
+#+END_SRC
+等价于
+#+BEGIN_SRC python
+RDD.groupBy().mapValues(lambda x: x.reduce(lambda i, j: i+j))
+#+END_SRC
+
+但是前者更为高效
+
+**** 连接操作
+
+见上述连接命令
+
+**** 数据排序
+
+自定义排序，用字符串顺序对整数进行排序
+#+BEGIN_SRC python
+rdd.sortByKey(ascending=True, numpartition=None, keyfunc=lambda x: str(x))
+#+END_SRC
+
+*** pairRDD的行动操作
+1. CountByKey() 按Key统计
+2. collectAsMap() 以映射表形式返回结果，以便查询。
+3. lookup(key) 返回给定键对应的所有值
+
+** 数据读取与保存
