@@ -1,0 +1,71 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: 面试相关问题
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: 
+#+OPTIONS: H:4 toc:t 
+
+
+* 专业问题
+
+** 机器学习
+
+** 数据库
+*** 四大属性
+ACID，原子性，一致性，持久性，隔离性
+
+*** 优化
+https://www.zhihu.com/question/19719997
+https://www.cnblogs.com/downey/p/5302088.html
+
+*** Hive mysql 区别
+
+1. Hive基于hadoop上，存储在HDFS中
+2. Hive不支持对数据的修改和添加
+3. Hive没有索引，通过分布式暴力扫描，因此访问延迟较高，不适合在线数据查询
+4. 由于建立在集群之上，所以支持超大规模数据
+
+** 计算机
+
+*** python装饰器
+#+BEGIN_SRC python
+from functools import wraps
+
+def timeit(function):
+    @wraps(function)
+    def func_time(*args, **kwargs):
+        t0 = time.time()
+        result = function(*args, **kwargs)
+        t1 = time.time()
+        print(t1 - t0)
+    return result
+return func_time
+
+@timeit
+#+END_SRC
+
+*** python垃圾回收
+引用计数，当计数为0时，进行回收
+
+导致引用计数+1的情况：
+- 对象被创建，例如a=23
+- 对象被引用，例如b=a
+- 对象被作为参数，传入到一个函数中，例如func(a)
+- 对象作为一个元素，存储在容器中，例如list1=[a,a]
+
+导致引用计数-1的情况：
+- 对象的别名被显式销毁，例如del a
+- 对象的别名被赋予新的对象，例如a=24
+- 一个对象离开它的作用域，例如f函数执行完毕时，func函数中的局部变量（全局变量不会）
+- 对象所在的容器被销毁，或从容器中删除对象
+
+*** python多重继承
+
+python3: 深度优先+从左到右
+*** 继承、封装、多态
+
+*** 接口、抽象类
+
+接口实现动作，抽象类告诉这个是什么

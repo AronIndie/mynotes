@@ -38,11 +38,13 @@ https://www.lagou.com/jobs/4066733.html?source=delivered&i=delivered-7
 =刚哥内推=
 - 数据智能部 ： 机器学习实习生
 
-** TODO 百度
+** DONE 百度
+- State "DONE"       from "TODO"       [2018-03-02 周五 15:43]
 上海_策略（机器学习/数据挖掘）实习生
 https://www.shixiseng.com/intern/inn_xv8gex1kbcce
 
-** TODO 平安科技
+** DONE 平安科技
+- State "DONE"       from "TODO"       [2018-03-02 周五 15:44]
 机器学习工程师实习生
 https://www.shixiseng.com/intern/inn_gejpg3qqyjdb
 
@@ -55,7 +57,8 @@ https://campus.alibaba.com/traineePositions.htm?refno=11901
 
 ** DONE 麦穗
 https://www.lagou.com/gongsi/192933.html
-** TODO 阿里巴巴优酷事业部
+** DONE 阿里巴巴优酷事业部
+- State "DONE"       from "TODO"       [2018-03-02 周五 14:52]
 【求帮转 能留用】
 阿里巴巴优酷事业部招收大数据方向实习生，要求19年毕业，本科硕士生均可，编程能力要强，如果简历优秀可以直接内推。欢迎有意向的师兄师姐联系我~
 邮箱 chuanqi.wcq@alibaba-inc.com
@@ -74,18 +77,110 @@ https://www.lagou.com/gongsi/192933.html
 ** TODO 京东春季实习生
 http://campus.jd.com/web/talk/index?t=4
 
+目前还差证书附件未上传
+
 ** TODO paypal
 数据科学家实习
 http://www.hotjob.cn/wt/PAYPAL/web/index?brandCode=1
 
-** TODO 携程
+** DONE 携程
+
+=内推成功，等待通知=
 http://recruitment.ctrip.com/list?year=2019
 
-** TODO 美团点评
-（尚未开始）
+** DONE 美团点评
+
+=内推成功，等待通知=
+
 http://campus.meituan.com/#/
 
-** TODO 蚂蚁金服
+** DONE 蚂蚁金服
+
+=邮件已发送=
 机器学习实习生
 1. 内推
 2. 简历发送至antcampus@alipay.com， 邮件主题格式：应聘职位+学校+姓名+手机号
+
+** TODO 阿里巴巴
+
+=已发邮件至https://zhuanlan.zhihu.com/p/33918092?utm_source=wechat_session&utm_medium=social，谋求内推=
+=由于投递简历后三天开始在线编程，可以往后拖一拖=
+
+https://zhuanlan.zhihu.com/p/33918092?utm_source=wechat_session&utm_medium=social
+** TODO 百度
+https://talent.baidu.com/external/baidu/index.html#/intern/12
+
+
+* 目前已填简历的网站
+
+** 拉钩
+** 实习僧
+
+** 携程
+** 京东
+** 美团点评
+** TODO 阿里巴巴
+3月6日晚填写
+** 百度
+- State "TODO"       from ""           [2018-03-02 周五 22:02]
+
+* 关键时间节点
+
+** 美团
+内推，免简历筛选，直接进笔试
+
+笔试时间：
+第一批： 3月22日
+第二批： 4月20日
+
+面试时间： 截止4月30日
+
+** 京东
+无内推
+笔试时间：4月9日
+面试时间：4月20-4月25
+offer发放：4月28~5月10日
+
+** 携程
+
+内推，免专业笔试，直接面试
+
+** 阿里
+
+内推： 内推→简历完善→测评&在线编程→简历评估→面试→发放录用意向书
+
+1. 在线编程 ： 简历完善后3天
+2. 人才素质测评：简历完善后3天
+3. 在线笔试（内推不用）: 2018年5月9日至5月11日，各科目具体安排4月下旬公告
+4. 面试：2018年3月1日至2018年4月14日
+
+
+
+** 百度
+在线笔试: 4-18
+面试： 交大 3月28日
+offer： 4月中下旬
+
+* 实习准备
+** 印象最深的项目
+VISAP
+** 最难的问题以及如何解决
+
+- 文本挖掘工具 匹配规则制定（根据表达式匹配）
+  - 充分结合数据结构方面的知识：后缀表达式（逆波兰式）
+  - 满足了分析师的新需求，优先级，或且非，括号（公司系统没有实现）
+  - 优化了存储，仅通过索引进行操作（snowNLP借鉴)
+
+- VISAP 空间作图  
+
+** 最大的优缺点
+优点：学习能力
+缺点：急性子，想到什么就去做什么。解决办法：emacs 时间管理，包括任务类型，开始时间，结束时间，完成状态，优先级
+** 读过哪些开源项目
+
+- snowNLP
+- costcla
+- sklearn
+
+
+
