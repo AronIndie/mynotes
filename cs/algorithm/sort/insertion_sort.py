@@ -11,7 +11,7 @@ def insertion_sort(a: list) -> list:
         if i != 0:
             temp = value
             j = i
-            while a[j] < a[j - 1] and j > 0:
+            while temp < a[j - 1] and j > 0:
                 a[j] = a[j-1]
                 j -= 1
             a[j] = temp
