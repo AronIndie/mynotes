@@ -140,7 +140,7 @@ K值确定：
 - KD树，类似KNN中找最近邻的问题，用kd树解决
 
 *** lasso 在 0处不可导怎么办
-通过坐标下降法求解
+通过坐标下降法(非梯度方法）求解
 *** SVD SVD++
 SVD: 矩阵分解+baseline mode,考虑每个样本的偏移项
 SVD++: SVD基础上引入隐式反馈,比如用户的浏览数据,历史评分数据
@@ -150,6 +150,39 @@ SVD++: SVD基础上引入隐式反馈,比如用户的浏览数据,历史评分�
 1. 类似adaboost，添加步长(学习率)，较小的步长需要较大的迭代次数。
 2. 只选择一部分样本，无放回抽样，比例一般在50%-80%
 3. CART树剪枝
+
+*** sigmoid函数 梯度爆炸与梯度消失
+在神经网络反向传播中，需要对每一曾的偏导数相乘，如果是sigmoid函数，其最大梯度为0.25，相乘后容易产生梯度消失，可以尝试使用Relu函数替代
+
+*** 非平衡数据如何使用交叉验证
+*Use K-fold Cross-Validation in the right way*
+ 
+It is noteworthy that cross-validation should be applied properly while using over-sampling method to address imbalance problems.
+
+Keep in mind that over-sampling takes observed rare samples and applies bootstrapping to generate new random data based on a distribution function. If cross-validation is applied after over-sampling, basically what we are doing is overfitting our model to a specific artificial bootstrapping result. That is why cross-validation should always be done before over-sampling the data, just as how feature selection should be implemented. Only by resampling the data repeatedly, randomness can be introduced into the dataset to make sure that there won’t be an overfitting problem.
+
+*** K折交叉验证 K确定
+不知道
+*** SVM推导
+*** lasso求解推导：
+1. 坐标下降法
+2. 最小角回归法（LRS）
+*** logistic值表示概率吗
+表示，由公式推导可知
+*** 为什么logistic选用sigmoid函数
+1. 优良性质：包括映射空间、求导方便，等等
+2. 最大熵推导得到 或者是指数分布族推导
+
+指数族推导：
+Y|X 服从伯努利分布，其密度函数为 p^y (1-p)^{(1-y)} 转化为指数形式，可得到ln(p/(1-p))， 令其为phi ，求解p，得到p为sigmoid函数
+*** 如何度量两个分布之间的差异性
+通过交叉熵（按照真实分布p来衡量识别一个样本的所需要的编码长度的期望(即平均编码长度)）
+
+H(p, q) = -\sum p(i) log q(i) >= H(p)
+*** 说一下Adaboost，权值更新公式。当弱分类器是LR时，每个样本的的权重是w1，w2...,写出最终的决策公式
+w = w * exp(- alpha y_i f(x_i)) y_i = -1 或 1
+*** GBDT如何进行特征选择
+依据：每个特征能够让分裂后平方损失的减少值
 
 ** 数据库
 *** 四大属性

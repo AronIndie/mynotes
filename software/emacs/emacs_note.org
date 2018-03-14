@@ -66,6 +66,7 @@
 (setq tramp-ssh-controlmaster-options
         "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 #+END_SRC
+12. emacs使用卡顿： 修改字体为Fira Mono， 同时Setting dotspacemacs-mode-line-unicode-symbols to nil
 ** org-mode
 
 | command      | desc         |

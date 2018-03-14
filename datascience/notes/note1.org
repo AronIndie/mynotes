@@ -622,6 +622,7 @@ adaboost算法仅仅提供框架，伪代码如下
 ref:
 https://www.jianshu.com/p/005a4e6ac775
 https://www.zhihu.com/question/29036379 （更为详细）
+https://www.cnblogs.com/pinard/p/6140514.html (最好）
 
 理解如下概念：
 1. 回归树       比如CART，以平方损失作为划分标准，在每一个连续值中迭代出最优划分，预测值为当前节点的均值
@@ -985,7 +986,6 @@ y_i f(x_i) - 1 + \zeta_i \ge 0 \\
 ** DONE 实现
 
 ** TOLEARN 支持向量回归
-* 神经网络
 * DONE 聚类算法[2/2]
 - State "DONE"       from "TODO"       [2018-01-22 周一 21:20]
 - State "TODO"       from ""           [2018-01-22 周一 16:32]
