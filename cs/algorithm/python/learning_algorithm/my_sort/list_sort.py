@@ -78,51 +78,64 @@ def three_median(arr):
     return arr
 
 
-def quick_sort(arr: list) -> list:
-    if len(arr) <= 1:
-        return  arr
+def quick_sort(arr: list, l: int, r: int):
+    if l >=r:
+        return
 
-    if len(arr) <= THRESHOLD:
-        return insert_sort(arr)
+    flag = arr[r]
+    low = l
+    high = r
+    while l < r:
+        while l < r and arr[l] < flag:
+            l += 1
+        arr[r] = arr[l]
 
-    three_median(arr)
-    flag = arr[-1]
-    i = 0
-    j = len(arr) - 2
-    while i < j:
+        while l < r and arr[r] > flag:
+            r -= 1
+        arr[l] = arr[r]
 
-        while arr[i] < flag and i < j:
-            i += 1
-        while arr[j] > flag and i < j:
-            j -= 1
+    arr[l] = flag
+    quick_sort2(arr, low, l - 1)
+    quick_sort2(arr, l + 1, high)
 
-        arr[i], arr[j] = arr[j], arr[i]
 
-    arr[i], arr[-1] = arr[-1], arr[i]
 
-    left = quick_sort(arr[: i])
-    right = quick_sort(arr[i+1: ])
-
-    return list(left) + [flag] + list(right)
-
+def quick_sort2(array, left, right):
+    if left >= right:
+        return
+    low = left
+    high = right
+    key = array[low]
+    while left < right:
+        while left < right and array[right] > key:
+            right -= 1
+        array[left] = array[right]
+        while left < right and array[left] < key:
+            left += 1
+        array[right] = array[left]
+    array[right] = key
+    quick_sort2(array, low, left - 1)
+    quick_sort2(array, left + 1, high)
 
 
 if __name__ == '__main__':
-    a = [3,1,2,5,7,8,6,4]
+    a = [0, 3,1,2,5,7,8,6,4,20]
     #print(insert_sort(a))
     #print(bubble_sort(a))
     #print(merge([1,3,5,9], [2,4,10,11]))
     #print(merge_sort(a))
 
-    import numpy as np
-    np.random.seed(10)
-    a = np.random.choice(np.arange(10000), 1000, replace=False)
-    import time
-
-    time1 = time.time()
-    #quick_sort(a)
-    #insert_sort(a)
-    #merge_sort(a)
-    time2 = time.time()
-    print(time2 - time1)
-    insert_sort(a)
+    # import numpy as np
+    # np.random.seed(10)
+    # a = np.random.choice(np.arange(10000), 1000, replace=False)
+    # import time
+    #
+    # time1 = time.time()
+    # #quick_sort(a)
+    # #insert_sort(a)
+    # #merge_sort(a)
+    # time2 = time.time()
+    # print(time2 - time1)
+    # insert_sort(a)
+    quick_sort(a, 0, len(a)-1)
+    print(a)

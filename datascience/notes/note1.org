@@ -1334,7 +1334,7 @@ ref : http://blog.csdn.net/u014303046/article/details/78200010
 
 \begin{eqnarray}
 \nonumber
-\delta_j^{[l]} = \frac{\partial L }{\partial a_j^{[l]}} Sigmoid^{-1} (z_j^{[l]})
+\delta_j^{[l]} = \frac{\partial L }{\partial a_j^{[l]}} Sigmoid^{'} (z_j^{[l]})
 \end{eqnarray}
 
 证明：
@@ -1345,7 +1345,7 @@ ref : http://blog.csdn.net/u014303046/article/details/78200010
 
 \begin{eqnarray}
 \nonumber
-\delta_j^{[l]} = \sum_k w_{kj}^{[l+1]} \delta_k^{[l+1]} Sigmoid^{-1} (z_j^{[l]})
+\delta_j^{[l]} = \sum_k w_{kj}^{[l+1]} \delta_k^{[l+1]} Sigmoid^{'} (z_j^{[l]})
 \end{eqnarray}
 
 w_{kj}^{[l]} 表示第l-1层的第j个神经元指向第l层的第k个神经元的权重
