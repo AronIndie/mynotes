@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 """
-寻找第k大的数，算法复杂度O(1)
+寻找第k大的数，算法复杂度O(n)
 """
 
 def find_kth_biggest(nums, k):
