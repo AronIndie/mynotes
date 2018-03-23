@@ -21,7 +21,40 @@ class Solution:
                         _max = [i-j, s[j:i+1]]
         return _max[1]
 
+
+    dic = {}
+
+    def longestPalindrome2(self, arr):
+        if arr in self.dic:
+            res = self.dic[arr]
+        else:
+            res = self.isPalindrome(arr)
+
+        if res:
+            return arr
+        else:
+            l = self.longestPalindrome2(arr[1:])
+            r = self.longestPalindrome2(arr[:-1])
+            return l if len(l) > len(r) else r
+
+    def isPalindrome(self, arr):
+        res = False
+        if not arr:
+           pass
+        elif len(arr) == 1:
+            res = True
+        elif len(arr) == 2:
+            if arr[0] == arr[1]:
+                res =  True
+
+        elif arr[0] == arr[-1]:
+            res = self.isPalindrome(arr[1:-1])
+        self.dic[arr] = res
+        return res
+
+
 if __name__ == '__main__':
-    a = "babad"
+    a = "dasdfdhfdfakkafdfhdasef"
     s = Solution()
-    print(s.longestPalindrome(a))
+    # print(s.longestPalindrome(a))
+    print(s.longestPalindrome2(a))

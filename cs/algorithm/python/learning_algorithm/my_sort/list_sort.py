@@ -9,14 +9,11 @@ from utils.time_it import timeit
 def insert_sort(arr: list) -> list:
     for i in range(1, len(arr)):
         temp = arr[i]
-
-        for j in range(i, 0, -1):
-            if temp < arr[j-1]:
-                arr[j] = arr[j-1]
-            else:
-                j += 1
-                break
-        arr[j-1] = temp
+        j = i
+        while j > 0 and temp < arr[j - 1]:
+            arr[j] = arr[j - 1]
+            j -= 1
+        arr[j] = temp
     return arr
 
 def bubble_sort(arr: list) -> list:
@@ -120,6 +117,7 @@ def quick_sort2(array, left, right):
 
 if __name__ == '__main__':
     a = [0, 3,1,2,5,7,8,6,4,20]
+    insert_sort(a)
     #print(insert_sort(a))
     #print(bubble_sort(a))
     #print(merge([1,3,5,9], [2,4,10,11]))
@@ -137,5 +135,5 @@ if __name__ == '__main__':
     # time2 = time.time()
     # print(time2 - time1)
     # insert_sort(a)
-    quick_sort(a, 0, len(a)-1)
+    #quick_sort(a, 0, len(a)-1)
     print(a)
