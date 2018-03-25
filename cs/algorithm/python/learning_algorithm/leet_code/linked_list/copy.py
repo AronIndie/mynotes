@@ -28,7 +28,10 @@ class Solution:
             pHead = pHead.next
 
         for i in dic:
-            dic[i].random = dic[i.random]
+            if i.random:
+                dic[i].random = dic[i.random]
+            else:
+                dic[i].random = None
         # temp = res
         # while temp:
         #     temp.random = dic[id(c.random)]
@@ -38,18 +41,21 @@ class Solution:
         return res
 
 if __name__ == '__main__':
-    a1 = RandomListNode(0)
-    a2 = RandomListNode(1)
-    a3 = RandomListNode(2)
-    a4 = RandomListNode(3)
+    a1 = RandomListNode(1)
+    a2 = RandomListNode(2)
+    a3 = RandomListNode(3)
+    a4 = RandomListNode(4)
+    a5 = RandomListNode(4)
 
     a1.next = a2
     a2.next = a3
     a3.next = a4
+    a4.next = a5
+
     a1.random = a3
-    a2.random = a1
-    a3.random = a4
+    a2.random = a5
     a4.random = a2
 
     s = Solution()
-    s.Clone(a1)
+    temp = s.Clone(a1)
+    print(temp)
