@@ -54,11 +54,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test7.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test7.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/leet_code/mytest/test7.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="595">
               <caret line="29" column="23" lean-forward="false" selection-start-line="29" selection-start-column="23" selection-end-line="29" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sum3closet.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/leet_code/array/sum3closet.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="46">
+              <caret line="12" column="21" lean-forward="false" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="four_sum.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/leet_code/array/four_sum.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="222">
+              <caret line="28" column="30" lean-forward="false" selection-start-line="28" selection-start-column="30" selection-end-line="28" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -94,26 +114,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test3.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/leet_code/mytest/test3.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="48">
-              <caret line="2" column="3" lean-forward="false" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test4.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/leet_code/mytest/test4.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2280">
-              <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -126,8 +126,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/leet_code/array/TwoSum.py" />
-        <option value="$PROJECT_DIR$/leet_code/array/test.py" />
         <option value="$PROJECT_DIR$/leet_code/array/max_sub_array.py" />
         <option value="$PROJECT_DIR$/leet_code/array/cost_climbs.py" />
         <option value="$PROJECT_DIR$/leet_code/问题整理.md" />
@@ -177,6 +175,8 @@
         <option value="$PROJECT_DIR$/leet_code/dynamic_programming/pack_problem.py" />
         <option value="$PROJECT_DIR$/leet_code/mytest/test6.py" />
         <option value="$PROJECT_DIR$/leet_code/mytest/test7.py" />
+        <option value="$PROJECT_DIR$/leet_code/array/sum3closet.py" />
+        <option value="$PROJECT_DIR$/leet_code/array/four_sum.py" />
       </list>
     </option>
   </component>
@@ -283,8 +283,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -308,37 +308,37 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test7">
-    <configuration name="pack_problem" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.four_sum">
+    <configuration name="four_sum" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/leet_code/dynamic_programming" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/leet_code/array" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="learning_algorithm" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/leet_code/dynamic_programming/pack_problem.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/leet_code/array/four_sum.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="test4" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="sum3closet" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/leet_code/mytest" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/leet_code/array" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="learning_algorithm" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/leet_code/mytest/test4.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/leet_code/array/sum3closet.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -395,19 +395,19 @@
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.test4" />
-      <item index="1" class="java.lang.String" itemvalue="Python.test5" />
-      <item index="2" class="java.lang.String" itemvalue="Python.pack_problem" />
-      <item index="3" class="java.lang.String" itemvalue="Python.test6" />
-      <item index="4" class="java.lang.String" itemvalue="Python.test7" />
+      <item index="0" class="java.lang.String" itemvalue="Python.test5" />
+      <item index="1" class="java.lang.String" itemvalue="Python.test6" />
+      <item index="2" class="java.lang.String" itemvalue="Python.test7" />
+      <item index="3" class="java.lang.String" itemvalue="Python.sum3closet" />
+      <item index="4" class="java.lang.String" itemvalue="Python.four_sum" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.test7" />
-        <item index="1" class="java.lang.String" itemvalue="Python.test6" />
-        <item index="2" class="java.lang.String" itemvalue="Python.test5" />
-        <item index="3" class="java.lang.String" itemvalue="Python.pack_problem" />
-        <item index="4" class="java.lang.String" itemvalue="Python.test4" />
+        <item index="0" class="java.lang.String" itemvalue="Python.four_sum" />
+        <item index="1" class="java.lang.String" itemvalue="Python.sum3closet" />
+        <item index="2" class="java.lang.String" itemvalue="Python.test7" />
+        <item index="3" class="java.lang.String" itemvalue="Python.test6" />
+        <item index="4" class="java.lang.String" itemvalue="Python.test5" />
       </list>
     </recent_temporary>
   </component>
@@ -451,7 +451,7 @@
     <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23712446" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24034335" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928064" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928064" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -731,6 +731,21 @@
           <line>9</line>
           <option name="timeStamp" value="161" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/leet_code/array/sum3closet.py</url>
+          <line>9</line>
+          <option name="timeStamp" value="162" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/leet_code/array/four_sum.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="164" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/leet_code/array/four_sum.py</url>
+          <line>15</line>
+          <option name="timeStamp" value="165" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -739,7 +754,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="162" />
+      <option name="time" value="166" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -751,21 +766,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/leet_code/array/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="15" column="24" lean-forward="false" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/leet_code/tree/gen_tree_from_pre_inoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/leet_code/array/binary_search.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="888">
@@ -1141,6 +1141,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
           <caret line="29" column="23" lean-forward="false" selection-start-line="29" selection-start-column="23" selection-end-line="29" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/leet_code/array/sum3closet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="12" column="21" lean-forward="false" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/leet_code/array/four_sum.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="28" column="30" lean-forward="false" selection-start-line="28" selection-start-column="30" selection-end-line="28" selection-end-column="30" />
           <folding />
         </state>
       </provider>
