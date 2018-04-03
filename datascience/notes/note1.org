@@ -535,16 +535,19 @@ P(x_i|y) = \frac{|D_{y,x_i}|}{|D_y|}
 p(w_i|x) = \frac{p(x|w_i)p(w_i)}{p(x)}
 \end{eqnarray}
 
-其中 $p(w_i)$ 表示第i个类别的先验概率，可由样本得到， $p(x|w_i)$ 为x的似然，根据概率密度函数推得，而我们就是要使得 $p(w_i|x)$ 最大
+其中w_i 表示第i个类别， $p(w_i)$ 表示第i个类别的先验概率，可由样本得到， $p(x|w_i)$ 为x的似然，根据概率密度函数推得，而我们就是要使得 $p(w_i|x)$ 最大
 
 对每个类别w_i，以及多维变量x，我们有:
 
 \begin{eqnarray}
 \nonumber
-p(x|w_i) = \frac{1}{\sqrt[d]{2 \pi} \Sigma_i^{1/2}} e^{-1/2 (x-\mu_i)^T \Sigma_i (x - \mu_i)}
+p(x|w_i) = \frac{1}{\sqrt[d]{2 \pi} |\Sigma_i|^{1/2}} e^{-1/2 (x-\mu_i)^T \Sigma_i^{-1} (x - \mu_i)}
 \end{eqnarray}
 
-其中 $\Sigma_i$ 表示第i个类别样本的协方差矩阵，$\mu_i$ 表示均值矩阵，d表示x的维度
+其中 $\Sigma_i$ 表示第i个类别样本的协方差矩阵,|sigma|表示行列式的值，$\mu_i$ 表示均值矩阵，d表示x的维度。
+上述方程分两个步骤：
+1. 参数的估计，包括 \mu_i 和 \sigma_i，这是模型的训练过程
+2. 概率密度的计算，即带入新的x，根据第1步得到的参数，计算上式，这是模型的预测过程
 
 ** 最小风险贝叶斯
 
@@ -556,7 +559,20 @@ p(x|w_i) = \frac{1}{\sqrt[d]{2 \pi} \Sigma_i^{1/2}} e^{-1/2 (x-\mu_i)^T \Sigma_i
 \alpha = \min_i R(\alpha_i|x) = \min_i \sum_j \lambda(\alpha_i,w_j) p(w_j|x)
 \end{eqnarray}
 
-广义的最小风险贝叶斯，只要得到 p(w_j|x)即可，无需通过最小错误率贝叶斯得到
+广义的最小风险贝叶斯，只要得到 p(w_j|x)即可，无需通过最小错误率贝叶斯得到。
+
+举个栗子：
+$\lambda_{1,1}, \lambda_{1,2}, \lambda_{2,1}, \lambda_{2,2}$ 分别表示将第一类判为第一类，将第二类判为第一类、将第一类判为第二类等等等的损失。
+那么
+\begin{eqnarray}
+\nonumber
+R(\alpha_1|x) = \sum_{j=1}^2 \lambda_{1,j} P(w_j|x) \\
+R(\alpha_2|x) = \sum_{j=1}^2 \lambda_{2,j} P(w_j|x) 
+\end{eqnarray}
+
+如果前者大于后者，说明将x分给第一类的损失要大于分给第二类的损失，那么我们就将其判为第二类。
+
+
 
 ** 半朴素贝叶斯
 半朴素贝叶斯打破了变量之间相互独立的假定，同时提出了 =独依赖估计(One-Dependent Estimator)= 策略，即假设每个变量只和一个父属性有关，即：
