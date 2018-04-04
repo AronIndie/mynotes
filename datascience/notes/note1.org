@@ -238,6 +238,7 @@ Graham，2009）。
 
 简述： 根据离待分类点距离最近的K个点的label，确定待分类点的label。
 
+~注意：~ knn当样本量越大时效果越好，但是带来计算量的上升
 **** 三要素
 - 训练集
 - 距离度量
@@ -444,7 +445,6 @@ w_j := w_j - \eta \frac{\partial J(w)}{\partial w_i} = w_j + \eta \sum_{i=1}^n (
 如果存在多个分类，那么可以训练多个分类器，一类一个，每一个训练样本都只属于下面两类：“是这类”和“不是这类”。训练的时候也是训练N套参数。
 
 对于一个测试样本，带入每一个分类器计算一遍概率，以概率最大的分类有效。
-
 
 
 
@@ -690,9 +690,9 @@ https://www.cnblogs.com/pinard/p/6140514.html (最好）
 
 1、初始化，估计使损失函数极小化的常数值，它是只有一个根节点的树，即gamma是一个常数值。
 2、
-（a）计算损失函数的负梯度在当前模型的值，将它作为残差的估计
-（b）估计回归树叶节点区域，以拟合残差的近似值
-（c）利用线性搜索估计叶节点区域的值，使损失函数极小化
+（a）计算损失函数的负梯度在当前模型的值，将它作为残差的估计 （计算残差）
+（b）估计回归树叶节点区域，以拟合残差的近似值 （拟合回归树）
+（c）利用线性搜索估计叶节点区域的值，使损失函数极小化 （计算叶节点的最优gamma）
 （d）更新回归树
 3、 得到输出的最终模型 f(x)
 
@@ -743,10 +743,9 @@ ref: http://blog.csdn.net/sb19931201/article/details/52557382
 
 5. 。。。
 
-* TODO HMM、判别分析、条件随机场、混合高斯
-** TODO HMM
-- State "TODO"       from ""           [2018-03-30 周五 09:56]
+* DONE HMM、判别分析、条件随机场、混合高斯
 
+** DONE HMM
 =概率图= 模型的一种，概率图模型包括了半朴素贝叶斯和贝叶斯网络
 
 =前提=
@@ -768,7 +767,7 @@ ref: http://blog.csdn.net/sb19931201/article/details/52557382
 3. 学习（训练）问题
 如何调整模型参数得到概率最大的观测序列
 
-** 判别分析
+** 线性判别分析
 
 
 ref: https://blog.csdn.net/daunxx/article/details/51881956
@@ -786,10 +785,12 @@ P(y=i|x) = \frac{f(x|y=i) \pi_{y=i}}{\sum_j f(x|y=j) \pi_{y=j}}
 
 *** LDA
 又叫Fisher判别，其假设f(x|y=i)为均值不同，方差相同的正态分布，可以用来降维
+是一个： ~有监督的降维或是分类方法~
 
 =有监督学习=
 
 实现方法：
+- 通过瑞利熵
 - 最大化类间距
 - 最小化类内聚
 *** GDA
@@ -797,7 +798,6 @@ P(y=i|x) = \frac{f(x|y=i) \pi_{y=i}}{\sum_j f(x|y=j) \pi_{y=j}}
 
 *** 二次判别分析QDA
 假设f(x|y=i)服从均值不同，方差也不同的正态分布
-
 
 ** 条件随机场CRF
 概率图模型的一种，判别式模型，借助马尔科夫无向图
@@ -1164,7 +1164,9 @@ word2vec忽略了前后词排列顺序的影响，而doc2vec没有
 
 =通过新增了一个段落向量实现=
 
-* DONE 聚类算法[2/2]
+* DONE 聚类算法[3/3]
+- State "DONE"       from "TODO"       [2018-04-04 周三 16:06]
+- State "TODO"       from "DONE"       [2018-04-04 周三 15:16]
 - State "DONE"       from "TODO"       [2018-01-22 周一 21:20]
 - State "TODO"       from ""           [2018-01-22 周一 16:32]
 ** DONE Kmeans
@@ -1172,6 +1174,23 @@ word2vec忽略了前后词排列顺序的影响，而doc2vec没有
 
 ** DONE 层次聚类
 - State "TODO"       from ""           [2018-01-22 周一 16:31]
+
+** DONE DBSCAN聚类
+
+DBSCAN(Density-Based Spatial Clustering of Applications with Noise，具有噪声的基于密度的聚类方法)
+
+ref: https://www.cnblogs.com/pinard/p/6208966.html
+
+~密度直达~ ， ~密度可达~
+
+=优点：=
+1. 具有噪声，不会对所有点聚类，对异常值不敏感
+2. 既可以对凸样本聚类，又可以对凹样本聚类
+3. 聚类结果没有偏倚，相对的，K-Means之类的聚类算法初始值对聚类结果有很大影响。
+
+=缺点：= 
+1. 如果样本集较大时，聚类收敛时间较长，此时可以对搜索最近邻时建立的KD树或者球树进行规模限制来改进。
+2. 如果样本集的密度不均匀、聚类间距差相差很大时，聚类质量较差，这时用DBSCAN聚类一般不适合。
 
 * DONE 数值优化专题
 - State "DONE"       from ""           [2018-01-25 周四 19:11]
@@ -1347,6 +1366,7 @@ w_{t+1} = w_t - \eta_{t+1} \sum_{i=1}^N \nabla f_i(w_t, x_i, y_i) \tag{(1)}
 \begin{eqnarray}
 w_{t+1} = w_t - \eta_{t+1} \nabla f_i(w_t, x_i, y_i) \tag{(2)}
 \end{eqnarray}
+
 其中i为从1到N中随机抽取的样本
 
 随机梯度下降提高了速度，但是降低了精度(极值处梯度不为0)。
@@ -1354,6 +1374,36 @@ w_{t+1} = w_t - \eta_{t+1} \nabla f_i(w_t, x_i, y_i) \tag{(2)}
 后来提出的 ~SAG，SVRG，SDCA~ 都是在降低方差，使其可以精确收敛
 
 “不在大型数据集上使用L-BFGS的原因之一是，在线算法可能收敛得更快。这里甚至有一个L-BFGS的在线学习算法，但据我所知，在大型数据集上它们都不如一些SGD的改进算法（包括 AdaGrad 或 AdaDelta）的表现好。”
+
+**** 动量梯度下降法
+
+\begin{eqnarray}
+\nonumber
+v_{dW} &=& \beta v_{dW} + (1 - \beta)dW \\
+v_{db} &=& \beta v_{db} + (1 - \beta)dv \\
+W &=& W - \alpha v_{dW} \\ 
+b &=& b - \alpha v_{db} 
+\end{eqnarray}
+
+其中 \beta 为超参数，一般取0.9，表示平均了前 1/(1-\beta) 期的梯度变化v。
+
+该方法避免了梯度在下降过程中左右摇摆、速度慢的问题，相当于在原来的梯度的基础上，加上了以前的梯度，并且以 \beta 加权
+
+**** GradDelta & AdaDelta
+
+=AdaGrade=
+\begin{eqnarray}
+\nonumber
+w_{t+1, i} = w_{t,i} - \frac{\eta}{\sqrt{G_{t,i} + \epsilon}} dw
+\end{eqnarray}
+
+其中，G_{t,i} 为第i个参数，t时刻之前的历史所有梯度的累加平方和矩阵，\epsilon是平滑项，防止除0
+
+~优势~ ： 学习率不断的变小，避免了手动调节学习率。缺点：由于分母不断变大，到后面学习能力越来越弱，因此提出了AdaDelta
+
+=AdaDelta=
+考虑了一个时间窗口，而不是将所有的历史梯度累加
+
 
 **** 共轭梯度法
 ref ： http://blog.csdn.net/lipengcn/article/details/52698895
@@ -1433,6 +1483,44 @@ BFGS仍然需要每次迭代 s_n, y_n 并没有减小内存的负担，而 Limit
 
 
 ** 程序编写
+
+* TODO 调参专题
+- State "TODO"       from ""           [2018-04-04 周三 16:06]
+
+** 网格搜索
+GridSearch ，给定参数上下界和步长，不断地组合和尝试
+用于：
+- 超参数数量少
+- 模型训练时间较短
+
+** 随机搜索
+
+给定参数上下界，在内部随机进行参数选取
+
+** 基于梯度的优化
+
+http://fa.bianp.net/blog/2016/hyperparameter-optimization-with-approximate-gradient/
+https://arxiv.org/abs/1502.03492
+
+** 坐标下降
+
+ref： https://www.zhihu.com/question/34470160
+*** 调整过程影响类参数
+如果是随机森林，那么只有子分类器数目
+如果是GBDT，那么有子分类器数目和学习率
+
+*** 调整子模型影响类参数
+包括分类条件（gini或信息增益）、最大特征数、最大深度、分裂最小样本数、叶节点最小样本数、最大叶节点数等等
+
+如果发生抖动情况，即效果和参数数值不存在明显关系，则忽略该参数的调整
+
+~数据和特征决定了机器学习的上限~ 调参只能逼近上限
+
+** 贝叶斯优化
+
+bayes_opt: https://github.com/fmfn/BayesianOptimization
+
+每次训练参数时都考虑前面所有参数提供的先验信息，并且在完成之后，通过最大后验给出最优参数，并再次更新该先验。
 
 * 神经网络与深度学习
 
