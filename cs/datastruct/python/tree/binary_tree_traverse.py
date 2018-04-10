@@ -44,12 +44,12 @@ def pre_order_traverse_norecursion(root: node):
     stack = []
     stack.append(root)
     while len(stack) != 0:
-        this_node = stack.pop(0)
+        this_node = stack.pop()
         print(this_node.value)
         if this_node.right != None:
-            stack.insert(0, this_node.right)
+            stack.append(this_node.right)
         if this_node.left != None:
-            stack.insert(0, this_node.left)
+            stack.append(this_node.left)
 
 
 def in_order_traverse_norecursion(root: node):
@@ -74,15 +74,15 @@ def post_order_traverse_norecursion(root: node):
     """
     stack1 = [root]
     stack2 = []
-    while len(stack1) != 0:
-        temp = stack1.pop(0)
-        stack2.insert(0, temp)
+    while stack1:
+        temp = stack1.pop()
+        stack2.append(temp)
         if temp.left:
-            stack1.insert(0, temp.left)
+            stack1.append(temp.left)
         if temp.right:
-            stack1.insert(0, temp.right)
+            stack1.append(temp.right)
     while len(stack2) != 0:
-        print(stack2.pop(0).value)
+        print(stack2.pop().value)
 
 def breadth_first_traverse(root: node):
     """

@@ -126,11 +126,14 @@ https://talent.baidu.com/external/baidu/index.html#/intern/12
 ** DONE paypal
 - State "DONE"       from ""           [2018-04-01 周日 20:07]
 
-** 美丽联合
-** 爱奇艺
+** 美丽联合(内推邮件）
+** 爱奇艺（内推邮件）
 ** 招行信用卡
-** TODO 网易
+** DONE 网易
+- State "DONE"       from "TODO"       [2018-04-08 周日 18:56]
 - State "TODO"       from ""           [2018-04-04 周三 20:42]
+** 小红书（内推邮件）
+
 
 * 关键时间节点
 
