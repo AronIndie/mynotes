@@ -118,15 +118,75 @@ def calculate(postfix):
             stack.append(c)
     return stack[-1]
 
+
+from collections import defaultdict
+
+def add_graphs(graphs, target, dic):
+    flag = False
+    for i,graph in enumerate(graphs):
+        if target[0] in graph and target[1] not in graph:
+            for j in graph:
+                dic[j] += 1
+            graph.append(target[1])
+            break
+        elif target[1] in graph and target[0] not in graph:
+            for j in graph:
+                dic[j] += 1
+            graph.append(target[0])
+            break
+        else:
+            if i == len(graphs) - 1:
+                flag = True
+    if flag:
+        graphs.append(target[:])
+        for i in target:
+            dic[i] += 2
+
+
+def fuck_dragon(edges):
+    dic = defaultdict(int)
+    graphs = []
+    for edge in edges:
+        if not graphs:
+            graphs.append(edge[:])
+            for i in edge:
+                dic[i] += 2
+        else:
+            add_graphs(graphs, edge, dic)
+    max_key = max(dic, key=lambda x:dic[x])
+    return max_key, dic[max_key]
+
+
+def kill_dragon(edges, i):
+    res = []
+    for j in edges:
+        if i not in j:
+            res.append(j)
+    return res
+
+def fuck_which_dragon(edges):
+    all_dragon = sum(edges, [])
+    dragon_num = max(all_dragon)
+    _min = (-1, 9999)
+    for i in range(dragon_num):
+        new_edge = kill_dragon(edges, i)
+        dragon, attack = fuck_dragon(new_edge)
+        if attack < _min[1]:
+            _min = (all_dragon[i-1], attack)
+    return _min
+
 if __name__ == '__main__':
-    target = "e"
-    root = ["a", "1"]
-    left = [["b", "1"], ["c", "1"], ["a", "1"], ["a", "1"], ["a", "1"]]
-    right = [["e", "2"], ["a", "1"], ["b", "1"], ["c", "1"], ["d", "1"]]
-    #print(foo(root, left, right, target))
-
-    a = "1 + 2 * 3 - (4*5)"
-    arr = parse(a)
-
-    pst = transfer(arr)
-    print(calculate(pst))
+    # target = "e"
+    # root = ["a", "1"]
+    # left = [["b", "1"], ["c", "1"], ["a", "1"], ["a", "1"], ["a", "1"]]
+    # right = [["e", "2"], ["a", "1"], ["b", "1"], ["c", "1"], ["d", "1"]]
+    # #print(foo(root, left, right, target))
+    #
+    # a = "1 + 2 * 3 - (4*5)"
+    # arr = parse(a)
+    #
+    # pst = transfer(arr)
+    # print(calculate(pst))
+    edges = [[1,2], [2,3], [2,4], [1,5], [5,7], [5,6], [5,8]]
+    print(fuck_dragon(edges))
+    print(fuck_which_dragon(edges))
