@@ -84,6 +84,7 @@ def post_order_traverse_norecursion(root: node):
     while len(stack2) != 0:
         print(stack2.pop().value)
 
+
 def breadth_first_traverse(root: node):
     """
     调用队列

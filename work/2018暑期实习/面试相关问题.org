@@ -248,7 +248,7 @@ A_{pxq} x B_{qxr}的效率看pqr的大小，
 - CV
 - AIC
 - BIC
-
+  
 *** one-class SVM
 ref: https://blog.csdn.net/sinat_26917383/article/details/76647272
 对单类样本增加约束，如是boundary离高维空间原点最远，同时加入松弛变量，对异常点进行检验
@@ -713,6 +713,25 @@ B+树：B-的变体，多叉树，所有关键字都在叶子节点出现，只�
 
 
 
+
+*** 树的遍历
+
+**** 深度优先
+
+***** 递归前序遍历
+
+
+#+BEGIN_SRC python :results output
+  def preOrderTraverse(root):
+      if not root:
+          return
+      print(root.value)
+      preOrderTraverse(root.left)
+      preOrderTraverse(root.right)
+#+END_SRC
+
+
+**** 广度优先
 
 ** 概率题
 
