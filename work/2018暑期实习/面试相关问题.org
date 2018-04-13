@@ -730,8 +730,101 @@ B+树：B-的变体，多叉树，所有关键字都在叶子节点出现，只�
       preOrderTraverse(root.right)
 #+END_SRC
 
+***** 非递归前序遍历
+#+BEGIN_SRC python
+def pre_order_traverse_NC(root):
+    stack = [root]
+    while stack:
+        temp = stack.pop()
+        print(temp.value)
+        if temp.right:
+            stack.append(temp.right)
+        if temp.left:
+            stack.append(temp.left)
+#+END_SRC
 
-**** 广度优先
+***** 递归中序遍历
+
+#+BEGIN_SRC python
+def in_order_traverse(root):
+    if not root:
+        return
+    in_order_traverse(root.left)
+    print(root.value)
+    in_order_traverse(root.right)
+#+END_SRC
+***** 非递归中序遍历
+#+BEGIN_SRC python
+def in_order_traverse_NC(root):
+    stack = []
+    temp = root
+    while temp or stack:
+        if temp:
+            stack.append(temp)
+            temp = temp.left
+        else:
+            temp = stack.pop()
+            print(temp.value)
+            temp = temp.right
+#+END_SRC
+***** 递归后序遍历
+#+BEGIN_SRC python
+def post_order_traverse(root):
+    if not root:
+        return
+    post_order_traverse(root.left)
+    post_order_traverse(root.right)
+    print(root.value)
+#+END_SRC
+
+***** 非递归后序遍历
+#+BEGIN_SRC python
+# 双栈法
+def post_order_traverse_NC1(root):
+    stack1 = [root]
+    stack2 = []
+    while stack1:
+        temp = stack1.pop()
+        stack2.append(temp)
+        if temp.left:
+            stack1.append(temp.left)
+        if temp.right:
+            stack2.append(temp.right)
+    while stack2:
+        print(stack2.pop())
+#+END_SRC
+
+#+BEGIN_SRC python
+# 单栈法
+def post_order_traverse_NC2(root):
+    stack = [root]
+    bool_dic = {}    # 记录节点的左右是否已经入栈过
+    while stack:
+        node = stack[-1]
+        if (not node.left and not node.right) or node in bool_dic:
+            print(stack.pop().value)
+
+        if node not in bool_dic:
+            bool_dic[node] = True
+            if node.right:
+                stack.append(node.right)
+            if node.left:
+                stack.append(node.left)
+#+END_SRC
+
+**** 广度优先(非递归）
+#+BEGIN_SRC python
+def breadth_first_traverse(root):
+    queue = [root]
+
+    while queue:
+        temp = queue.pop(0)
+        print(temp.value)
+        if temp.left:
+            queue.append(temp.left)
+        if temp.right:
+            queue.append(temp.right)
+#+END_SRC
 
 ** 概率题
 
