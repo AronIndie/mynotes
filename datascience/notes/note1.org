@@ -102,6 +102,7 @@ winsorize 变换
 *** Wrapper
 递归特征消除
 *** Embedded
+**** 基于正则项的特征选择
 =为什么正则项(Regularization)可以防止过拟合？=
 
 ref: http://blog.csdn.net/jackie_zhu/article/details/52134592
@@ -143,7 +144,29 @@ J = \frac{1}{N}\sum_{i=1}^N (f(x_i) - y_i)^2 + \lambda \sum_{i=1}^N ||w||^2
 
 =为什么L1正则可做特征选择？=
 
+1. 图形角度
 [[file:pics/lasso.png]]
+2. 概率论角度
+
+- L1加入了拉普拉斯先验，尖峰，在0处概率非常高
+- L2加入了高斯先验，钟形，在0处概率和0附近概率差不多
+
+
+
+
+
+**** 基于树的特征选择
+
+以GBDT为例，特征j的全局重要程度通过特征j在单颗树中的重要程度平均值来衡量
+
+\begin{eqnarray}
+\nonumber
+J_j^2 (T) = \sum_{t=1}^{L-1} i_t^2 1(v_t =j)
+\end{eqnarray}
+
+其中T为第T颗树，L为叶子节点数目，对于一颗满二叉树，非叶子节点数目等于L-1，1(v_t = j)表示如果该非叶子节点的分裂特征是j，那么就是1，否则为0；i_t^2表示该节点安装j分裂后带来的平方损失的减少值。
+
+
 
 * DONE 基于树的算法[2/2]
 - State "DONE"       from "TODO"       [2018-01-16 周二 11:25]
@@ -685,6 +708,7 @@ ref:
 https://www.jianshu.com/p/005a4e6ac775
 https://www.zhihu.com/question/29036379 （更为详细）
 https://www.cnblogs.com/pinard/p/6140514.html (最好）
+https://blog.csdn.net/yangxudong/article/details/53872141 （深入理解）
 
 理解如下概念：
 1. 回归树       比如CART，以平方损失作为划分标准，在每一个连续值中迭代出最优划分，预测值为当前节点的均值
@@ -719,6 +743,16 @@ https://www.cnblogs.com/pinard/p/6140514.html (最好）
 
 
 =可以证明， Gradient Boosting相当于二分类的Adaboost算法， 而指数损失仅可用于二分类的情况=
+
+=注意：=
+- AdaBoost算法那对异常值较为敏感，而GBDT通过引入bagging抽样的方法以及正则项，对噪声更加稳健，并且能够更好地防止过拟合。
+- 梯度提升有学习率，用于每次更新 y_hat 并且目的是为了防止过拟合，学习率越低越过拟合
+- 梯度提升树可以用来做特征选择，给定每个特征的得分
+- XGBoost对缺失值有着自己的处理方法:
+  - 如果训练中出现缺失值，将确实的数据分别分到左子树和右子树，选择较优的那个
+  - 如果测试汇总出现缺失值，则默认被分到右子树
+
+
 
 *** bagging
 
