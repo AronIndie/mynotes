@@ -167,7 +167,6 @@ J_j^2 (T) = \sum_{t=1}^{L-1} i_t^2 1(v_t =j)
 其中T为第T颗树，L为叶子节点数目，对于一颗满二叉树，非叶子节点数目等于L-1，1(v_t = j)表示如果该非叶子节点的分裂特征是j，那么就是1，否则为0；i_t^2表示该节点安装j分裂后带来的平方损失的减少值。
 
 
-
 * DONE 基于树的算法[2/2]
 - State "DONE"       from "TODO"       [2018-01-16 周二 11:25]
 - State "TODO"       from "TODO"       [2018-01-15 周一 14:38]
@@ -491,7 +490,6 @@ w_j := w_j - \eta \frac{\partial J(w)}{\partial w_i} = w_j + \eta \sum_{i=1}^n (
 
 
 
-
 * DONE 基于贝叶斯的算法
 - State "DONE"       from ""           [2018-01-17 周三 12:58]
 ** 朴素贝叶斯
@@ -634,6 +632,122 @@ P(Y|X) \propto P(Y) \prod\limits_{i=1}^{d} P(x_i|Y, pa_i)
 
 ** 贝叶斯网络
 略
+
+** 高斯过程回归
+
+
+ref:
+  - https://www.zhihu.com/question/46631426?sort=created
+  - http://www.360doc.com/content/17/0810/05/43535834_678049865.shtml
+
+
+高斯过程可以用于非线性回归、非线性分类、参数寻优等等
+
+
+以往的建模需要对 p(y|X)建模，当用于预测时，则是 
+
+\begin{eqnarray}
+\nonumber
+p(y_{N+1} | X_{N+1})
+\end{eqnarray}
+
+而高斯过程则 ~还考虑了y_N 和 y_{N+1}~ 之间的关系，即：
+
+\begin{eqnarray}
+\nonumber
+p(y_{N+1} | X_{N+1}, y_{N})
+\end{eqnarray}
+
+高斯过程通过假设Y值服从联合正态分布，来考虑 y_N 和 y_{N+1} 之间的关系，因此需要给定参数包括：均值向量和协方差矩阵，即：
+
+\begin{eqnarray}
+\nonumber
+
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+... \\
+y_n \\
+\end{bmatrix} \sim
+N( \mathbf{0}, \begin{bmatrix}
+k(x_1, x_1) , k(x_1, x_2), ..., k(x_1, x_n) \\
+k(x_2, x_1) , k(x_2, x_2), ..., k(x_2, x_n) \\
+... \\
+k(x_n, x_1) , k(x_n, x_2), ..., k(x_n, x_n) 
+\end{bmatrix} )
+\end{eqnarray}
+
+
+其中协方差矩阵又叫做 ~核矩阵~  记为 $\mathbf{K}$ ，仅和特征x有关，和y无关。
+
+高斯过程的思想是： ~假设Y服从高维正态分布（先验），而根据训练集可以得到最优的核矩阵 ，从而得到后验以估计测试集Y*~
+
+我们有后验：
+
+\begin{eqnarray}
+\nonumber
+p(y_*| \mathbf{y} \sim N(K_* K^{-1} \mathbf{y}, ~  K_{**} - K_* K^{-1} K_*^T)
+\end{eqnarray}
+
+其中，K_*为训练集的核向量，有如下关系：
+
+\begin{eqnarray}
+\nonumber
+\begin{bmatrix}
+\mathbf{y} \\
+y_*
+\end{bmatrix} \sim
+N(\mathbf{0}, \begin{bmatrix}
+K, K_*^T \\
+K_*, K_{**} \\
+\end{bmatrix})
+\end{eqnarray}
+
+可以发现，在后验公式中，只有均值和训练集Y有关，方差则仅仅和核矩阵，也就是训练集和测试集的X有关，与训练集Y无关
+
+=估计（训练）方法=
+
+假设使用平方指数核(Squared Exponential Kernel)，那么有：
+
+\begin{eqnarray}
+\nonumber
+k(x_1, x_2) = \sigma^2_f exp(\frac{-(x_1 - x_2)^2}{2 l^2})
+\end{eqnarray}
+
+那么所需要的确定的超参数 $\theta = [\sigma^2_f, l]$ ，由于Y服从多维正态分布，因此似然函数为：
+
+\begin{eqnarray}
+\nonumber
+L = log p(y| x, \theta) = - \frac{1}{2} log|\mathbf{K}| - \frac{1}{2} (y - \mu)^T \mathbf{K}^{-1} (y - \mu) - n*log(2\pi)/2
+\end{eqnarray}
+
+由于K是由theta决定的，所以通过梯度下降即可求出超参数theta，而根据核矩阵的计算方式也可以进行预测。
+
+
+
+** 贝叶斯优化
+
+
+*** 简介
+
+贝叶斯优化是一种逼近思想，当计算非常复杂、迭代次数较高时能起到很好的效果，多用于超参数确定
+
+=基本思想=
+是基于数据使用贝叶斯定理估计目标函数的后验分布，然后再根据分布选择下一个采样的超参数组合。它充分利用了前一个采样点的信息，其优化的工作方式是通过对目标函数形状的学习，并找到使结果向全局最大提升的参数
+
+~高斯过程~ 用于在贝叶斯优化中对目标函数建模，得到其后验分布
+
+通过高斯过程建模之后，我们尝试抽样进行样本计算，而贝叶斯优化很容易在局部最优解上不断采样，这就涉及到了开发和探索之间的权衡。
+
+- 开发 (exploitation)：   根据后验分布，在最可能出现全局最优解的区域进行采样, 开发高意味着均值高
+- 探索 (exploration):     在还未取样的区域获取采样点，   探索高意味着方差高
+
+=Acquisition Function=
+用来寻找下一个x的函数
+
+
+*** 理论
+
 * DONE EM算法
 - State "DONE"       from ""           [2018-01-17 周三 13:30]
 ** 简介
@@ -1723,11 +1837,6 @@ n表示第l层神经元个数，m为样本数
 - 得到的w依然是 nxn 的矩阵
 
 *** 实现
-
-** 
-** 
-** 
-
 ** 卷积神经网络
 
 ref: http://blog.csdn.net/aws3217150/article/details/46405095
