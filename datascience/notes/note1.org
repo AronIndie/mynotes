@@ -62,6 +62,8 @@ DEADLINE: <2018-01-06 周六>
 
 ~自助法在数据集较小，难以有效划分训练集和测试集时非常有用~ ，但是由于改变了初始数据的分布，因此会引入估计偏差，所以前两种用的比较多一点
 
+~对于包含时序的数据，必须使用之前的数据进行交叉验证，来预测之后的数据~
+
 ** CANCELED 网格搜索
 
 ** 如何检验过拟合
@@ -73,16 +75,90 @@ https://www.cnblogs.com/yan2015/p/5052393.html
 
 =这里主要是拿到机器学习比赛数据后的处理方式=
 
+
 [[file:pics/data_process.png]]
 
-** step1. 认识数据
+** 认识数据
 
 - 观察特征的分布情况（是否正态、是否偏锋、是否厚尾、是否非平衡）
 - 观察特征之间的关系
   - 脱敏数据：相关系数矩阵，热力图等
   - 非脱敏数据：通过变量名称推断其关系，并且进行验证
 
-** step2. 
+~注意：所有数据预处理的参数均是由训练数据得到，在交叉验证中切记切记~
+~处理方式：通过管道，得到一个完整的分类器（输入+输出），将其带入交叉验证函数中~
+
+** 变量类型判断
+~在一开始即可完成~
+
+- 连续变量
+- 二分类变量
+- 多分类变量
+  - 名义变量
+  - 有序变量
+
+#+BEGIN_SRC python
+def get_type(arr):
+    """
+    获取变量类型数组，包括了binary， multi_class，continuous
+    :param arr:   np.ndarray
+    :return:      list[LabelType]
+    """
+    if len(arr.shape) == 2:
+        res = []
+        for feature in arr.T:
+            count = np.unique([i for i in feature if not np.isnan(i)])
+            is_continuous = False
+            for i in count:
+                # 当存在浮点型，且小数点后有数字时，是连续值
+                if int(i) != i:
+                    is_continuous = True
+
+            if np.max(feature) - np.min(feature) > 10:
+                is_continuous = True
+            if len(count) == 2:
+                res.append(LabelType.binary)
+            elif is_continuous:
+                res.append(LabelType.continuous)
+            else:
+                res.append(LabelType.multi_class)
+        return res
+    elif len(arr.shape) == 1:
+        count = np.unique([i for i in arr if not np.isnan(i)])
+        is_continuous = False
+        for i in count:
+            # 当存在浮点型，且小数点后有数字时，是连续值
+            if int(i) != i:
+                is_continuous = True
+                break
+
+        if np.max(arr) - np.min(arr) > 10:
+            is_continuous = True
+        if len(count) == 2 or len(count) == 1:
+            return LabelType.binary
+        elif is_continuous:
+            return LabelType.continuous
+        else:
+            return LabelType.multi_class
+
+#+END_SRC
+
+** 异常值、错误值处理
+~在一开始即可完成~
+
+~异常值一般只针对连续数据~
+
+1. 通过分布图的方式发现异常值
+2. 分情况处理：
+   - 如果分布存在较明显的双峰异常，则添加虚拟变量，作为新的特征
+   - 如果只是个别的特大或特小值，则用winsorize变换进行处理或者直接剔除
+
+** 缺失值处理
+~每次交叉验证都需要进行~
+
+
+
+
 
 
 
