@@ -156,8 +156,149 @@ def get_type(arr):
 ** 缺失值处理
 ~每次交叉验证都需要进行~
 
+ref:
+- http://blog.sina.com.cn/s/blog_7fb03f7d01012j6p.html
+- https://zhuanlan.zhihu.com/p/22677693
+- https://blog.csdn.net/lujiandong1/article/details/52654703
 
 
+*** 缺失机制
+1. 随机缺失(MAR) ： 缺失的可能性与其他完全变量（不含缺失值的变量）有关，比如后续的调查只针对IQ大于100的人，缺失与IQ有关，则是随机缺失
+2. 完全随机缺失(MCAR)：缺失不依赖于任何不完全变量或完全变量，比如资料遗失、机器损坏等
+3. 非随机缺失(MANR)：数据的缺失依赖于不完全变量自身，比如收入较低的人不愿意填写收入栏
+
+数据是否是完全随机缺失可以采用单变量t检验和Little (1988)提出的多元t检验
+
+研究者推荐使用包含辅助变量（Auxiliary Variables，与缺失值相关的因素）的方法减少估计偏差并提高满足MAR假设的可能
+
+*** 脱敏与非脱敏数据
+- 如果是脱敏数据，则所有缺失情况均可作为随机缺失或完全随机缺失处理
+- 如果是非脱敏数据，则需要通过变量名称进行推断
+
+*** 不同机制的处理方法
+
+无论什么情况，缺失数据过多时均可考虑舍弃该特征
+
+**** MAR, MCAR:
+
+- 行删除： ~你可以删除包含空值的对象用完整的数据集来进行训练，但预测时你却不能忽略包含空值的对象~
+- 均值、中位数、众数填补
+- 模型补全
+  - 回归：连续数据、相对均值更好，缺点：线性，共线性
+  - KNN：针对离散数据，缺点：大数据集下效率低
+  - EM算法：对似然函数进行EM估计，缺点：收敛慢，复杂
+  - 多重填补：
+- 独热编码，将缺失值看成虚拟变量，对离散数据有效，对连续数据建议先离散化后再做
+- 不处理
+  - C4.5 将特征A上的缺失样本同时划入子节点中，同时根据子节点的标签类别比例调整样本权重：https://blog.csdn.net/u012328159/article/details/79413610
+  - GBDT(XGBoost)：xgboost把缺失值当做稀疏矩阵来对待，本身的在节点分裂时不考虑的缺失值的数值。缺失值数据会被分到左子树和右子树分别计算损失，选择较优的那一个。如果训练中没有数据缺失，预测时出现了数据缺失，那么默认被分类到右子树
+  - 贝叶斯(网络)：？https://datascience.stackexchange.com/questions/3711/how-does-the-naive-bayes-classifier-handle-missing-data-in-training?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+  - 人工神经网络：？
+
+
+**** MANR
+
+由于缺失情况和该变量本身有关，因此直接将其转为虚拟变量即可：
+
+- 针对离散变量：“男”、“女”、nan， 通过两个虚拟变量进行替换
+- 针对连续变量：
+  - 值非常稀疏的变量：年净收入 0~100k、nan，先进行离散化，再转为虚拟变量
+  - 值不是非常稀疏的变量：年龄 20~50、nan，直接进行离散化
+
+
+** 新变量生成
+~在一开始完成即可~
+
+*** 根据变量含义生成新变量
+
+比如： 根据身份证号码生成性别、居住省份、居住城市、星座（玄学）等
+
+~需要基于对变量的理解~
+
+*** 数据的特征构造新特征
+
+- 缺失值特征
+- 异常值特征
+- 非众数特征
+
+*** 多项式特征
+
+- 直接加入多项式特征，再通过特征选择筛选
+- 适用于关键特征较少的情况
+
+#+BEGIN_SRC python
+from sklearn.preprocessing import PolynomialFeatures
+
+poly = PolynomialFeatures(degree=10)
+poly.fit(X)
+X_poly = poly.transform(X)
+#+END_SRC
+
+
+
+** 连续特征标准化与区间缩放
+~每次交叉验证都需要进行~
+
+*** 注意
+- 线性模型需要用标准化的数据建模,而树类模型不需要标准化的数据
+- 处理标准化的时候,注意将测试集的数据transform到test集上
+
+*** 标准化(standardization)
+
+使不同度量的变量具有可比性，同时 ~不改变原始数据的分布~ 
+
+好处：
+- 使具有可比性
+- 不改变分布
+
+\begin{eqnarray}
+\nonumber
+x' = \frac{x - \bar{x}}{\sigma}
+\end{eqnarray}
+
+
+=注意=
+什么样的模型需要进行标准化：基于距离的（LR，Kmeans，SVM）
+
+*** 区间缩放
+
+使各个特征维度对目标函数的影响权重是一致的，即使得那些扁平分布的数据伸缩变换成类圆形，但是 ~改变了数据的原始分布~
+
+好处：
+- 提高迭代求解的速度
+- 提高迭代求解的精度
+
+
+**** Rescaling(归一化)
+
+\begin{eqnarray}
+\nonumber
+x' = \frac{x - min(x)}{max(x) - min(x)}
+\end{eqnarray}
+
+**** Mean normalization
+
+
+\begin{eqnarray}
+\nonumber
+x' = \frac{x - mean(x)}{max(x) - min(x)}
+\end{eqnarray}
+
+**** Scaling to unit length
+
+\begin{eqnarray}
+\nonumber
+x' = \frac{x}{||x||}
+\end{eqnarray}
+
+
+
+** 离散特征 独热编码
+~在一开始完成即可~
+
+
+
+~注意：如果某虚拟变量在测试集中存在而训练集中不存在，怎么办？~
 
 
 
@@ -1040,7 +1181,7 @@ P(y=i|x) = \frac{f(x|y=i) \pi_{y=i}}{\sum_j f(x|y=j) \pi_{y=j}}
 
 分类器的差异表现在 f(x|y=i)的分布函数假定不同
 
-~上述公式只针对生成式模型~
+~上述公式只针对判别式模型~
 
 *** LDA
 又叫Fisher判别，其假设f(x|y=i)为均值不同，方差相同的正态分布，可以用来降维
@@ -1689,7 +1830,49 @@ w_{t+1, i} = w_{t,i} - \frac{\eta}{\sqrt{G_{t,i} + \epsilon}} dw
 
 
 **** 共轭梯度法
-ref ： http://blog.csdn.net/lipengcn/article/details/52698895
+ref ： 
+1. http://blog.csdn.net/lipengcn/article/details/52698895
+2. https://www.zhihu.com/question/27157047
+3. https://blog.csdn.net/fangqingan_java/article/details/47011943
+
+***** 什么是共轭
+复数中的共轭： $z=a+bi$ 的复共轭（简称共轭）为 $\bar{z} = a-bi$ ，常数的共轭为其自身
+
+向量集合共轭：给定向量集合 p 和对称正定矩阵A， $p_i^T A p_j = 0, \ i \neq j$ ， ~此时p之间是线性独立的~
+
+***** 什么是共轭矩阵
+
+我们称 A 和 A* 互为共轭矩阵当且仅当：
+
+ \begin{eqnarray}
+ \nonumber
+ (A*)_{i,j} = \bar{A_{j,i}}
+ \end{eqnarray}
+
+***** 什么是共轭梯度
+
+共轭梯度算法解决了一类特殊的优化问题：
+
+\begin{eqnarray}
+\nonumber
+\min{\phi(x)} = \frac{1}{2} x^T A x - b^T x
+\end{eqnarray}
+
+
+推导见ref2. 详细算法见ref3.
+
+算法包括了：
+- CG-Preliminary算法
+- CG算法
+
+~本质上，就是把目标函数分成许多方向，然后不同方向分别求出极值再综合起来，方向之间两两共轭确保了每个方向的极值将得到最终的极值~
+
+***** 共轭梯度优点
+- 仅仅需要一阶梯度
+- 存储量小
+- 收敛快
+- 稳定性高
+
 
 **** 牛顿法
 
