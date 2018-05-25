@@ -205,6 +205,13 @@ ref:
   - 值非常稀疏的变量：年净收入 0~100k、nan，先进行离散化，再转为虚拟变量
   - 值不是非常稀疏的变量：年龄 20~50、nan，直接进行离散化
 
+*** sklearn的方法
+
+Imputer方法可以对数据进行插补，更重要的是， ~它支持稀疏数据~
+
+#+BEGIN_SRC python
+from sklearn.preprossing import Imputer
+#+END_SRC
 
 ** 新变量生成
 ~在一开始完成即可~
@@ -233,7 +240,6 @@ poly = PolynomialFeatures(degree=10)
 poly.fit(X)
 X_poly = poly.transform(X)
 #+END_SRC
-
 
 
 ** 连续特征标准化与区间缩放
@@ -293,26 +299,216 @@ x' = \frac{x}{||x||}
 
 
 
+*** 特殊情况：稀疏点的区间缩放
+
+常规的Scale容易破坏数据的稀疏性结构，而MaxAbsScaler不会shift or center the data，因此不会改变稀疏结构
+
+#+BEGIN_SRC python
+import sklearn.preprossing.MaxAbsScaler
+#+END_SRC
+
+
+*** 特殊情况：离群点的区间缩放
+
+#+BEGIN_SRC python
+import sklearn.preprocessing.RobustScaler 
+#+END_SRC
+
+通过分位数进行区间缩放，因此更加稳健
+
 ** 离散特征 独热编码
 ~在一开始完成即可~
 
-
-
 ~注意：如果某虚拟变量在测试集中存在而训练集中不存在，怎么办？~
 
+*** 方法一
+
+- 如果在train中存在而test中不存在： 为test中添加0列
+#+BEGIN_SRC python
+# Get missing columns in the training test
+missing_cols = set( train.columns ) - set( test.columns )
+# Add a missing column in test set with default value equal to 0
+for c in missing_cols:
+    test[c] = 0
+# Ensure the order of column in the test set is in the same order than in train set
+test = test[train.columns]
+#+END_SRC
+
+- 如果在test中存在而在train中不存在：剔除test中的对应列
+
+#+BEGIN_SRC python
+# Get missing columns in the training test
+missing_cols = set( test.columns ) - set( train.columns )
+# Add a missing column in test set with default value equal to 0
+for c in missing_cols:
+    del test[c]
+#+END_SRC
+
+- 如果上述两种情况交杂，则各自去差集处理
+
+*** 方法二：
+
+在独热编码时就同时加入训练集和测试集
+
+#+BEGIN_SRC python
+import pandas as pd
+
+train_objs_num = len(train)
+dataset = pd.concat(objs=[train, test], axis=0)
+dataset_preprocessed = pd.get_dummies(dataset)
+train_preprocessed = dataset_preprocessed[:train_objs_num]
+test_preprocessed = dataset_preprocessed[train_objs_num:]
+#+END_SRC
+
+*** 方法三(最好)
+#+BEGIN_SRC python
+import pandas as pd
+train = pd.DataFrame(data = [['a', 123, 'ab'], ['b', 234, 'bc']],
+                     columns=['col1', 'col2', 'col3'])
+test = pd.DataFrame(data = [['c', 345, 'ab'], ['b', 456, 'ab']],
+                     columns=['col1', 'col2', 'col3'])
+
+train1 = pd.get_dummies(train)
+test1 = pd.get_dummies(test)  
+
+# 生成列名一致的两张表，外连接，缺失值用0填充
+new_train, new_test = train1.align(test1,join='outer', axis=1, fill_value=0)
+#+END_SRC
+
+** 数据不平衡方法
+
+*** 简介
+
+**** 什么是数据不平衡问题(imbalance dataset)
+样本标签，或者说是预测目标，取值不平衡，比如为0的非常多，为1的非常少，导致分类器容易将所有样本均预测为0，带来的准确率却很高
+
+**** 为什么类不平衡是不好的
+- 从模型的训练过程来看：少量样本提供的信息过少，是的训练容易受误差干扰
+- 从模型的预测过程来看： *当预测几率大于观测几率时* ，样本被判为正类，比如先验的观测几率是0.5，而少量样本容易扭曲观测几率
+
+*** 文献与方法综述
+
+最详细的资料：https://pypi.python.org/pypi/imbalanced-learn#id31
+以及用户手册：http://contrib.scikit-learn.org/imbalanced-learn/stable/
+
+*** 抽样方法
+**** Under Sampling (欠采样法、向下采样法)，减少多数类样本
+***** Edited Nearest Neighbor (ENN)
+对每个多数类的样本， 如果他的大部分K近邻样本是少数类，那么将该点删去
+
+***** Repeated Edited Nearest Neighbor
+重复ENN直至样本不发生改变
+
+***** Tomek Link Removal
+*REF* : "Two Modifications of CNN", 1976
+如果样本点A和样本点B的最近邻（即K=1近邻）都是对方，且A与B分别属于少数类与多数类，则将该点删去
+
+***** Ensemble 模型融合法
+*REF* : "Exploratory undersampling for class-imbalance learning", 2009
+
+*思想* :
+    多次下采样（放回采样，这样产生的训练集才相互独立）产生多个不同的训练集，进而训练多个不同的分类器，通过组合多个分类器的结果得到最终的结果
+
+***** BalanceCascade 增强训练法
+*REF* : "Exploratory undersampling for class-imbalance learning", 2009
+
+*思想* :
+    先通过一次下采样产生训练集，训练一个分类器，对于那些分类正确的大众样本不放回，然后对这个更小的大众样本下采样产生训练集，训练第二个分类器，以此类推，最终组合所有分类器的结果得到最终结果
+
+**** Over Sampling (过采样法，向上采样法），增加少数类样本
+***** 随机有放回抽少数类样本到总样本中，并加入随机扰动
+
+*** 合成方法
+**** SMOTE (Synthetic Minority Oversampling TEchnique)
+*REF* : 
+    - "DATA MINING FOR IMBALANCED DATASETS:AN OVERVIEW"
+    - "SMOTE: Synthetic Minority Over-sampling Technique", 2002
+
+*步骤* ：
+    1. 对于少数类样本集{x_i, i=1,...,n}，找到每个x_i的K个同为少数类的近邻样本点
+    2. 对每个x_i，随机抽取K个近邻点中的一个，记为x_i^{(k)}
+    3. 生成新的样本点 x_{i,1} = x_i + \eta_1 · (x_i^{(k)} - x_i)，其中\eta_1位0-1之间的随机数
+    4. 将步骤3执行N次，最终得到N倍于原少数类样本的点
+
+*改进* ：
+    该方法的缺点是，增加了类之间重叠的可能性，并且有可能生成一些无意义的样本，因此有如下改进方法
+    - Borderline-SMOTE
+    - ADASYN
+
+**** Borderline-SMOTE
+
+*主要思想* ：
+- 如果少数类样本点附近全是多数类的点，那么改点很明显为噪声，不做处理或者是剔除
+- 如果少数类样本点附近有较多的多数类样本，那么说明该样本刚好处于分类的边界，具有较大的信息。
+- 如果少数类样本点附近有较少的多数类样本点，那么该样本点很安全，如果强行合成新样本点，则会模糊分类的边界，因此不做处理
+
+实际操作中，如果K/2以上的K近邻点都为多数类，那么就进行合成，否则不合成
+
+**** SMOTE + ENN
+*REF* : "A study of the behavior of several methods for balancing machine learning training data" Batista et al 2004
+
+**** SMOTE + Tomek
+*REF* : "A study of the behavior of several methods for balancing machine learning training data" Batista et al 2004
+
+**** SMOTEBoost
+*REF* : "SMOTEBoost: Improving Prediction of the Minority Class in Boosting", 2003
+
+结合了SMOTE和AdaBoost算法，不断更新样本的分布
+*** 加权方法
+
+给与不同错误损失不同的权重，视情况而定
+
+*** 一分类方法
+
+当正负样本相差特别悬殊时，把他看成一分类或者是异常检测问题，此时重点不在于捕捉类间的差别，而是为其中一类进行建模，经典的工作包括One-class SVM等。
+
+*** 方法选择
+来自博客：http://blog.csdn.net/lujiandong1/article/details/52658675
+
+1. 在正负样本都非常之少的情况下，应该采用数据合成的方式；
+2. 在负样本足够多，正样本非常之少且比例及其悬殊的情况下，应该考虑一分类方法；
+3. 在正负样本都足够多且比例不是特别悬殊的情况下，应该考虑采样或者加权的方法。
+4. 采样和加权在数学上是等价的，但实际应用中效果却有差别。尤其是采样了诸如Random Forest等分类方法，训练过程会对训练集进行随机采样。在这种情况下，如果计算资源允许上采样往往要比加权好一些。
+5. 另外，虽然上采样和下采样都可以使数据集变得平衡，并且在数据足够多的情况下等价，但两者也是有区别的。实际应用中，我的经验是如果计算资源足够且小众类样本足够多的情况下使用上采样，否则使用下采样，因为上采样会增加训练集的大小进而增加训练时间，同时小的训练集非常容易产生过拟合。
+6. 对于下采样，如果计算资源相对较多且有良好的并行环境，应该选择Ensemble方法。
+
+*** 实现
+
+python imbalance-learn 包
+
+
+** 管道pipline
+
+*** FunctionTransformer自定义一个转化器,并且可以在Pipeline中使用
+
+#+BEGIN_SRC python
+import numpy as np
+from sklearn.preprocessing import FunctionTransformer
+transformer = FunctionTransformer(np.log1p)#括号内的就是自定义函数
+X = np.array([[0, 1], [2, 3]])
+transformer.transform(X)
+#+END_SRC
+
+*** 运行流程
+
+#+BEGIN_SRC python
+from sklearn.pipeline import Pipeline
+
+pipe_lr = Pipeline([('sc', StandardScaler()),
+                    ('pca', PCA(n_components=2)),
+                    ('clf', LogisticRegression(random_state=1))
+                    ])
+pipe_lr.fit(X_train, y_train)
+print('Test accuracy: %.3f' % pipe_lr.score(X_test, y_test))
+#+END_SRC 
+
+之前的每一个管道方法必须继承 ~fit~ 和 ~transform~ 的属性，最后一层方法继承 ~fit~ ~score~ ~predict~
+
+[[file:pics/pipline.png]]
 
 
 
-* DONE 预处理[5/5]
-- State "DONE"       from "TODO"       [2018-01-23 周二 19:21]
-** CANCELED 标准化，归一化
-** CANCELED 异常值
-winsorize 变换
-** CANCELED 缺失值
-- 均值、中值、分位数、众数、随机值填补，效果一般
-- 通过其他非缺失变量预测，或是进行差值与拟合，但是必须是存在某些关系的变量才行
-- 最准确的方法：把变量映射到高维空间。比如性别，有男、女、缺失三种情况，则映射成3个变量：是否男、是否女、是否缺失。连续值不建议这样处理。
-** CANCELED 编码
+* DONE 特征预处理(特征工程)
 ** DONE 特征选择
 *** Filter
 自变量和目标变量之间的关联
