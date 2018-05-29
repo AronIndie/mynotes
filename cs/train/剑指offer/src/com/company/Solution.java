@@ -4,8 +4,6 @@ import java.lang.reflect.Array;
 
 public class Solution {
 
-
-
     public boolean Find(int target, int [][] array) {
         /*
         剑指offer第一题, 二维数组中查找数字
@@ -28,6 +26,7 @@ public class Solution {
         return false;
     }
 
+    
     public String replaceSpace(StringBuffer str) {
         int spacenum = 0;//spacenum为计算空格数
         for (int i = 0; i < str.length(); i++) {

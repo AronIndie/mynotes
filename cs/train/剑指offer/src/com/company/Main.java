@@ -7,6 +7,7 @@ public class Main {
         // write your code here
         Solution s = new Solution();
         test1(s);
+        System.out.println(2.0 - 1);
 
     }
 
