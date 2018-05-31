@@ -1299,8 +1299,6 @@ w_j := w_j - \eta \frac{\partial J(w)}{\partial w_i} = w_j + \eta \sum_{i=1}^n (
 
 对于一个测试样本，带入每一个分类器计算一遍概率，以概率最大的分类有效。
 
-
-
 * DONE 基于贝叶斯的算法
 - State "DONE"       from ""           [2018-01-17 周三 12:58]
 ** 朴素贝叶斯
@@ -1752,11 +1750,17 @@ ref: http://blog.csdn.net/sb19931201/article/details/52557382
 概率图模型的一种，判别式模型，借助马尔科夫无向图
 
 ** 混合高斯模型GMM
+
+~可用于聚类和预测~
+
+ref: https://blog.csdn.net/ice110956/article/details/13775071
 半监督（由于标记样本成本高昂，因此半监督学习同时利用标记的样本和未标记的样本），生成式，EM算法进行估计
 
 估计过程和k-means非常类似，只不过初始值时正态分布参数而不是聚类中心点
 
-* TODO 支持向量机[5/6]
+* TODO 支持向量机[4/6]
+- State "TODO"       from "TODO"       [2018-05-31 四 13:13]
+- State "TODO"       from "TODO"       [2018-05-31 四 13:11]
 - State "TODO"       from "TODO"       [2018-01-21 周日 15:09]
 
 ** 前言
@@ -2064,13 +2068,18 @@ y_i f(x_i) - 1 + \zeta_i \ge 0 \\
 
 以上在求解SMO算法时有着重要的意义
 
-** DONE 实现
+** SOMEDAY 支持向量回归
 
-** TOLEARN 支持向量回归
+** TODO 推导过程
+*** 几何间隔推导出优化方程一般形式
+*** 拉格朗日对偶问题推导
+*** KKT条件推导
+*** SMO算法推导
+*** 核函数推导
+*** 软间隔推导
+
 
 * DONE 文本挖掘
-
-
 ** word2vec
 =以往的词向量方法：=
 
@@ -2112,7 +2121,9 @@ y_i f(x_i) - 1 + \zeta_i \ge 0 \\
 
 - 输入层： 特征词上下文相关的词对应的词向量（ ~初始随机的n维向量~ ），词的总数我们成为 ~窗口大小~ ，如果窗口大小为8，那么输入层神经元数目为8
 - 隐含层：一般为1个隐含层即可
-- 输出层：输出所有词的softmax概率，为一个向量，长度为词汇表大小
+- 输出层：输出所有词的softmax概率，为一个向量，长度为词汇表（所有单词）大小
+
+~最终的词向量由神经网络中的权重得到~
 
 **** Skip-Gram模型
 同样通过三层神经网络实现，但是思路与CBOW模型刚好相反
@@ -2570,15 +2581,28 @@ bayes_opt: https://github.com/fmfn/BayesianOptimization
 *** 激活函数
 
 1. sigmoid
+优点：求导方便
+缺点：计算量大，易导致梯度消失
 2. tanh
-3. 修正线性单元(Rectified linear unit，ReLU）
-
-ReLU(x) = 
-- 0, if x <= 0
-- x, if x > 0
-
+优点：零均值，在特征相差明显时效果较好，比sigmoid效果好
+缺点：计算量大，收敛速度慢
+3. ReLu ( max(0, x) )
 ~起到单侧抑制的作用~
 ~由于非负区间的梯度为常数，因此不存在梯度消失问题(Vanishing Gradient Problem)~
+优点：(1) 训练速度非常快 (2)不会产生梯度消失 (3)一定程度上降低了模型的复杂度，使更稀疏
+缺点：learning rate（梯度下降参数）过大时神经元十分脆弱，导致 =神经元死亡= 即输出激活值永远是0，参数不再更新
+4. pReLu
+pReLu = x, if x > 0
+pReLu = ax, if x < 0
+避免了死神经元的问题
+5. softmax
+e^z / sum_k^K e^k
+z为某神经元的线性值，K为当前层所有神经元的线性值。softmax特点是多分类，如果某一值明显大于其他值，那么softmax后会明显趋于1，其他的都趋于0，就完成了分类目的。
+
+选择：
+首选通用的ReLu，如果出现死神经元，上PReLu，再和Sigmoid、tanh等对比，找最好的
+
+
 
 ** BP反向传播网络
 
@@ -2662,7 +2686,6 @@ n表示第l层神经元个数，m为样本数
 - 更新b的时候要对每一层的误差矩阵求行均值
 - 得到的w依然是 nxn 的矩阵
 
-*** 实现
 ** 卷积神经网络
 
 ref: http://blog.csdn.net/aws3217150/article/details/46405095
@@ -2758,7 +2781,7 @@ s_t = f(Ux_t + W _{t-1})
 
 \begin{eqnarray}
 \nonumber
-o_t = g(V_{t} + V_{t}^') \\
+o_t = g(V_{t} + V_{t}' ) \\
 \end{eqnarray}
 
 *** 训练方法：BPTT
