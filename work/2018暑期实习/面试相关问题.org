@@ -767,6 +767,7 @@ e
 *以上所有log均是以2为低
 *1 用链表实现的选择排序则是稳定的
 *精简排序是指排序过程中每一对元素只会比较一次
+*建堆复杂度是O(1)
 
 *** 霍夫曼树
 
@@ -789,8 +790,8 @@ e
 - k sum:
   - 固定一个数后递归 k-1 sum，O(n^{k-1})
 
-*** TODO 有向图的拓扑排序（确定是否有环）
-- State "TODO"       from ""           [2018-04-28 周六 18:18]
+*** DONE 有向图的拓扑排序（确定是否有环）
+- State "DONE"       from "TODO"       [2018-05-31 四 19:43]
 
 1. 在有向图中选一个没有前驱的顶点并且输出
 2. 从图中删除该顶点和所有以它为尾的弧（白话就是：删除所有和它有关的边）
@@ -942,7 +943,15 @@ def breadth_first_traverse(root):
 #+END_SRC
 
 *** 最大乘积子序列
-
+#+BEGIN_SRC python
+def foo(arr):
+    l_max = [arr[0]]
+    l_min = [arr[0]]
+    for i in arr:
+        l_max.append(max(max(i*l_max[-1], i*l_min[-1]), i))
+        l_min.append(min(min(i*l_max[-1], i*l_min[-1]), i))
+    return max(l_max+l_min)
+#+END_SRC
 
 
 ** 概率题
