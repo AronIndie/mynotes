@@ -741,7 +741,7 @@ A = Q \Sigma Q^{-1}
 
 主成分分析事实上是一个等式约束优化问题:
 
-\begin{eqnarray}
+  \begin{eqnarray}
 \nonumber
 \max_{\lambda} {Var(\theta_1 X)}} \\
 \nonumber
