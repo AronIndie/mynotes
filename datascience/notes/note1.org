@@ -3101,7 +3101,7 @@ L = \sum_{i=1}^n \sum_{j=1}^m (R_{ij} - U_i^T I_j)^2
 
 为了防止过拟合，可在其中加入正则项
 
-\begin{eqnarray}
+  \begin{eqnarray}
 \nonumber
 L = \sum_{i=1}^n \sum_{j=1}^m [(R_{ij} - U_i^T I_j)^2 + \lambda_1 ||U_i||^2 + \lambda_2 ||I_j||^2]
 \end{eqnarray}
