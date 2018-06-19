@@ -99,7 +99,6 @@ ref:
 - https://zhuanlan.zhihu.com/p/22677693
 - https://blog.csdn.net/lujiandong1/article/details/52654703
 
-
 *** 缺失机制
 1. 随机缺失(MAR) ： 缺失的可能性与其他完全变量（不含缺失值的变量）有关，比如后续的调查只针对IQ大于100的人，缺失与IQ有关，则是随机缺失
 2. 完全随机缺失(MCAR)：缺失不依赖于任何不完全变量或完全变量，比如资料遗失、机器损坏等
