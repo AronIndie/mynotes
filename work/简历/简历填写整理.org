@@ -36,19 +36,19 @@
 *** 成果
 获全国一等奖 top10 in 1000+
 
-** 个人机器学习库开发
+** 个人机器simple_ml学习库开发
 *** 项目描述
-• 个人项目
-• 仅依赖numpy和部分python基础库，从底层实现常用的特征工程、模型评价、分类与聚类算法，包括Filter特征选择、模型效果评价、分类作图、交叉验证、SVM,、KNN、CART、Logistic、朴素贝叶斯、RandomForest、BP 神经网络、AdaBoost、GBDT等
+- 个人项目
+- 仅依赖numpy和部分python基础库，从底层实现常用的特征工程、模型评价、分类与聚类算法，包括Filter特征选择、模型效果评价、分类作图、交叉验证、SVM,、KNN、CART、Logistic、朴素贝叶斯、RandomForest、BP 神经网络、AdaBoost、GBDT等
 *** 项目中职责
 • 统一接口规范，实现算法代码
 • 相关文档撰写
 • 代码检查和规范
 
 *** 成果
-Github地址：https://github.com/Yangruipis/simpleML
-用户手册：https://yangruipis.github.io/simple_ml/
-pypi： pip install simple_male
+- Github地址：https://github.com/Yangruipis/simpleML
+- 用户手册：https://yangruipis.github.io/simple_ml/
+- pypi： pip install simple_male
 
 ** 大学生挑战杯——商科统计软件VISAP开发
 *** 项目描述
@@ -62,7 +62,10 @@ pypi： pip install simple_male
 
 Github地址: https://github.com/Yangruipis/VISAP
 
-** Kaggle
+** kaggle home credit default Risk
+- 利用现有数据预测贷款者违约行为
+- 负责特征工程，包括数据预处理、多表聚合、特征选择（Lasso, Featuretools)；模型构建(lightGBM, Stacking)与参数优化(Bayes, GridSearch)
+- 得到AUC值0.798，在4500+队伍中排名前16%（截至2018-07-15）
 
 * 实习经历
 
@@ -74,11 +77,13 @@ Github地址: https://github.com/Yangruipis/VISAP
 
 1. 基于机器学习的期权策略，包括了50etf期权相关特征提取，多因子选择，模型构建等(LR，SVM，DT)，策略回测收益12%
 2. CTP接口Python 版本再封装与测试，大大简化了策略模拟盘和实盘操作。Github地址：https://github.com/Yangruipis/ctp-python
+3. 股指期货跨期套利策略模拟盘和实盘上线
 
 ** Kantar Media CIC(中国领先的网络口碑咨询公司)
 
-• 文本挖掘软件开发(两个月，C#，包括了窗体设计和优化、情感分析(Naive Bayes,增量训练, word2vec)，文本匹配(根据公司业务场景提出规则表达式方法）• 文本挖
-• 爬虫(BS4,WireShark等)；数据可视化(ggplot2, ggmap)；微博账号影响力评价体系构建
+1. 文本挖掘软件开发(两个月，C#，包括了窗体设计和优化、情感分析(Naive Bayes,增量训练, word2vec)，文本匹配(根据公司业务场景提出规则表达式方法）
+2. 爬虫(BS4,WireShark等)；数据可视化(ggplot2, ggmap)；微博账号影响力评价体系构建
+
 
 
 * 获奖情况
