@@ -1,0 +1,70 @@
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setmainfont{"微软雅黑"}
+#+ATTR_LATEX: :width 5cm :options angle=90
+#+TITLE: 秋招题目训练
+#+AUTHOR: 杨 睿
+#+EMAIL: yangruipis@163.com
+#+KEYWORDS: 秋招
+#+OPTIONS: H:4 toc:t 
+
+
+* 公司真题
+
+** 拼多多2018数据分析岗内推提前批
+
+*** SQL，连续三天
+
+题目：
+
+现有一个数据库表Tourists，记录了某个景点7月份每天来访游客的数量如下：
+id    date    visits
+1    2017-07-01    100
+……
+非常巧，id字段刚好等于日期里面的几号。现在请筛选出连续三天都有大于100天的日期。
+
+解答：
+
+思路：通过window函数，取（前天、昨天、今天）的最小值、（昨天、今天、明天）的最小值、（今天、明天、后天）的最小值，一旦有一个大于100，则输出当前时间
+
+#+BEGIN_SRC sql
+select 
+#+END_SRC
+
+*** SQL，update语句，值互换
+
+在一张工资表salary里面，发现2017-07这个月的性别字段男m和女f写反了，请用一个Updae语句修复数据
+例如表格数据是：
+id name gender salary month
+1   A     m     1000   2017-06
+2   B     f     1010   2017-06
+
+#+BEGIN_SRC sql
+create table pinduoduo2(
+	id int,
+    name char(10),
+    gender char(2),
+    month char(10))
+    ;
+    
+insert into pinduoduo2 values ('1', 'A', 'm', '2017-06') ,('2', 'B', 'f', '2017-06'), ('3', 'B', 'm', '2017-07');
+
+select * from pinduoduo2;
+
+update 
+pinduoduo2 as p1
+join pinduoduo2 as p2
+on (
+p1.gender = 'm' and p2.gender = 'f'
+or
+p1.gender = 'f' and p2.gender = 'm'
+)
+set p1.gender = p2.gender
+where p1.month = '2017-06';
+
+select * from pinduoduo2;
+#+END_SRC
+
+*** 
+
+
+* 经典题型
