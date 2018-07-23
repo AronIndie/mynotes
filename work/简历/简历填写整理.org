@@ -11,14 +11,18 @@
 
 热爱数据与编程，有大量统计建模经验。乐于挑战，追求新技术。英语读写流畅(CET6:541)，业余爱好有摄影、骑行等
 
-• python 两年开发经验，熟练使用sklearn, pandas 等库，熟悉XGBoost, LightGBM的使用以及调参方法, 了解Tensorflow, Keras等深度学习库，熟悉面向对象编程
-• C# 两年开发经验，熟悉窗体程序开发，了解多线程编程
-• 熟练掌握MySQL, Hive 的查询和优化、R 语言数据可视化、Git使用，曾用Java实现基本数据结构与算法，了解Spark、Docker，两年半Linux 使用经验，Emacs 使用者。
-• 数理统计基础扎实，熟悉计量经济，多元统计，时间序列，贝叶斯统计等方面的知识。
-• 熟练掌握机器学习相关算法及原理(SVM, LR, DT, RF, NB, GBDT等)，了解深度学(RNN, CNN, LSTM)和推荐系统基本算法(RNN, LSTM, SVD, ICF 等)
+- python 两年开发经验，熟练使用sklearn, pandas 等库，熟悉XGBoost, LightGBM的使用以及调参方法, 了解Tensorflow, Keras等深度学习库，熟悉面向对象编程
+- 熟练掌握MySQL, Hive 的查询和优化、R 语言数据可视化、Git使用，曾用Java实现基本数据结构与算法，了解Spark、Docker，两年半Linux 使用经验，Emacs 使用者。
+- 数理统计基础扎实，熟悉计量经济，多元统计，时间序列，贝叶斯统计等方面的知识。
+- 熟练掌握机器学习相关算法及原理(SVM, LR, DT, RF, NB, GBDT等)，了解深度学(RNN, CNN, LSTM)和推荐系统基本算法(RNN, LSTM, SVD, ICF 等)
 
 
 * 项目经验
+
+** kaggle home credit default Risk
+- 利用现有数据预测贷款者违约行为
+- 负责特征工程，包括数据预处理、多表聚合、特征选择（Lasso, Featuretools)；模型构建(lightGBM, Stacking)与参数优化(Bayes, GridSearch)
+- 得到AUC值0.798，在4500+队伍中排名前16%（截至2018-07-15）
 
 ** “东证期货杯”全国大学生统计建模大赛——信贷违约模型
 
@@ -26,46 +30,42 @@
 - 根据机器学习理论与征信机构采集到的丰富个人信息，建立信贷违约行为的预测模型，实现完整的机器学习项目流程。
 - 本项目主要问题有：（1）数据不平衡，通过SMOTE+Tomek方法解决；（2）需要尽可能降低授信成本，通过引入Cost-Sensitive Matrix解决。
 
-
+  
 *** 项目中职责
-1. 特征工程，包括特征预处理、特征选择 (python)
-2. 非平衡数据处理 (SMOTE+Tomek)
-3. 部分基本模型调参 (Logistic、NB、RF、GBDT等)
-4. 模型融合Stacking方法实现 (python)
+- 特征工程，包括特征预处理、特征选择 (python)
+- 非平衡数据处理 (SMOTE+Tomek)
+- 部分基本模型调参 (Logistic、NB、RF、GBDT等)
+- 模型融合Stacking方法实现 (python)
 
 *** 成果
-获全国一等奖 （top10 in 1000+）
+获全国一等奖 （top 10 in 1000+）
 
-** 个人机器simple_ml学习库开发
+** 个人机器学习库simple_ml开发
 *** 项目描述
 - 个人项目
 - 仅依赖numpy和部分python基础库，从底层实现常用的特征工程、模型评价、分类与聚类算法，包括Filter特征选择、模型效果评价、分类作图、交叉验证、SVM,、KNN、CART、Logistic、朴素贝叶斯、RandomForest、BP 神经网络、AdaBoost、GBDT等
 *** 项目中职责
-• 统一接口规范，实现算法代码
-• 相关文档撰写
-• 代码检查和规范
+- 统一接口规范，实现算法代码
+- 相关文档撰写
+- 代码检查和规范
 
 *** 成果
 - Github地址：https://github.com/Yangruipis/simpleML
 - 用户手册：https://yangruipis.github.io/simple_ml/
 - pypi： pip install simple_male
-
+  
 ** 大学生挑战杯——商科统计软件VISAP开发
 *** 项目描述
 着力于解决商科学生在统计软件上的弱势，开发针对商科学生的功能强大，易于上手，集数据获取、统计作图、统计分析、数据挖掘、报告导出为一体的统计软件
 *** 项目中职责
-1. 负责统计功能开发(空间作图、假设检验、方差分析、回归分析、时间序列等)，抽样算法开发(ARS, ARMS)
-2. 负责爬虫对接，包括：国家统计局宏观数据、财经股票数据等数据一键获取
-3. 部分窗体界面开发
+- 负责统计功能开发(空间作图、假设检验、方差分析、回归分析、时间序列等)，抽样算法开发(ARS, ARMS)
+- 负责爬虫对接，包括：国家统计局宏观数据、财经股票数据等数据一键获取
+- 部分窗体界面开发
 
 *** 成果
 
 Github地址: https://github.com/Yangruipis/VISAP
 
-** kaggle home credit default Risk
-- 利用现有数据预测贷款者违约行为
-- 负责特征工程，包括数据预处理、多表聚合、特征选择（Lasso, Featuretools)；模型构建(lightGBM, Stacking)与参数优化(Bayes, GridSearch)
-- 得到AUC值0.798，在4500+队伍中排名前16%（截至2018-07-15）
 
 
 * 实习经历
@@ -77,16 +77,16 @@ Github地址: https://github.com/Yangruipis/VISAP
 
 ** 上海通金投资有限公司
 
-1. 基于机器学习的期权策略，包括了50etf期权相关特征提取，多因子选择，模型构建等(LR，SVM，DT)，策略回测收益12%
-2. CTP接口Python 版本再封装与测试，大大简化了策略模拟盘和实盘操作。Github地址：https://github.com/Yangruipis/ctp-python
-3. 股指期货跨期套利策略模拟盘和实盘上线
+- 基于机器学习的期权策略，包括了50etf期权相关特征提取，多因子选择，模型构建等(LR，SVM，DT)，策略回测收益12%
+- CTP接口Python 版本再封装与测试，大大简化了策略模拟盘和实盘操作。Github地址：https://github.com/Yangruipis/ctp-python
+- 股指期货跨期套利策略模拟盘和实盘上线
 
 范庐君  
 
 ** Kantar Media CIC(中国领先的网络口碑咨询公司)
 
-1. 文本挖掘软件开发(两个月，C#，包括了窗体设计和优化、情感分析(Naive Bayes,增量训练, word2vec)，文本匹配(根据公司业务场景提出规则表达式方法）
-2. 爬虫(BS4,WireShark等)；数据可视化(ggplot2, ggmap)；微博账号影响力评价体系构建
+- 文本挖掘软件开发(两个月，C#，包括了窗体设计和优化、情感分析(Naive Bayes,增量训练, word2vec)，文本匹配(根据公司业务场景提出规则表达式方法）
+- 爬虫(BS4,WireShark等)；数据可视化(ggplot2, ggmap)；微博账号影响力评价体系构建
 
 王能  13917711952
 
@@ -105,8 +105,9 @@ Github地址: https://github.com/Yangruipis/VISAP
 
 奖项：中国大数据创新行动大赛 一等奖（第一名）
 获奖级别：国家级
-获奖描述：• 利用统计和数据挖掘方法，对大众点评店铺数据进行分析，并且为管理者提供了相关的意见和建议，比如：“风险偏好的管理者，可以尝试在竞争力大的行政区、商圈或是菜品投资，尝试提高自己的星级来提高存活概率，在有限成本约束下，店铺可以选择重点提高自身口味来生存下去”
-• 获得奖金5万元
+获奖描述：
+- 利用统计和数据挖掘方法，对大众点评店铺数据进行分析，并且为管理者提供了相关的意见和建议，比如：“风险偏好的管理者，可以尝试在竞争力大的行政区、商圈或是菜品投资，尝试提高自己的星级来提高存活概率，在有限成本约束下，店铺可以选择重点提高自身口味来生存下去”
+- 获得奖金5万元
 获奖时间：2016-12-22
 
 ** 3.
