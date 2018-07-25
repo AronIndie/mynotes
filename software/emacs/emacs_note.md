@@ -64,5 +64,6 @@ tips:
 - 显示图片：引用前面加上file\:，可以相对引用，也可以绝对引用，但是不可加description，否则无法正常显示。之后按`C-c C-x C-v`显示图片
 - latex公式显示： `C-u C-u C-c C-x C-l`，全部不显示`C-c C-c`
 - python运行：1. `C-c C-p`打开ipython终端；2. `C-u C-c C-c` 运行python文件（包括main函数）或者`C-c C-c`运行python文件（不包括main函数）
+- figlet库，生成文本构成字体
   
 
