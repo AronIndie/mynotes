@@ -161,8 +161,9 @@ S = 1*2^(H-1) + 2*2^(H-2) + ... + H*2^(H-H) = 2N - 2 - log2(N)，因此时间复
 : [0, 1, 2, 3, 4, 5]
 
 
-** TODO 快速排序
+** DONE 快速排序
 
+- State "DONE"       from "TODO"       [2018-07-25 三 19:02]
 - State "TODO"       from              [2018-07-24 二 14:55]
 **O(NlogN), O(N2)，为什么说快排优于堆排序：**
 - 时间复杂度并不意味着真正的运行时间
@@ -195,9 +196,45 @@ S = 1*2^(H-1) + 2*2^(H-2) + ... + H*2^(H-H) = 2N - 2 - log2(N)，因此时间复
 #+RESULTS:
 : [0, 1, 2, 3, 4, 5]
 
-*** TODO 非递归 快排
 
-- State "TODO"       from              [2018-07-24 二 14:56]
+
+*** DONE 非递归 快排
+
+**通过队列实现**
+
+#+BEGIN_SRC java
+public static void QuickSortNoRecur(int[] arr){
+
+        Queue<Pair<Integer, Integer>> queue = new LinkedList<>();
+        queue.offer(new Pair<>(0,arr.length-1));
+        while (!queue.isEmpty()){
+            Pair<Integer, Integer> pair = queue.poll();
+            int a = pair.getKey();
+            int b = pair.getValue();
+            if (a >= b)
+                continue;
+            int start = a;
+            int end = b;
+            int target = arr[b];
+            while (a < b){
+                while ((a < b) & (arr[a] <= target))
+                    a += 1;
+                arr[b] = arr[a];
+                while ((a < b) & (arr[b] > target))
+                    b -= 1;
+                arr[a] = arr[b];
+            }
+            arr[a] = target;
+            Pair<Integer, Integer> left_index = new Pair<>(start, a-1);
+            Pair<Integer, Integer> right_index = new Pair<>(a+1, end);
+            queue.offer(left_index);
+            queue.offer(right_index);
+        }
+
+
+    }
+#+END_SRC
+
 
 ** 桶排序
 
@@ -218,25 +255,319 @@ S = 1*2^(H-1) + 2*2^(H-2) + ... + H*2^(H-H) = 2N - 2 - log2(N)，因此时间复
 ** 计数排序
 
 
-* 基于树的算法
 
+* 基于字符串的算法
 
-
-* 基于顺序表的算法
+* 基于线性表的算法
 
 
 
 ** 链表
-详细程序见"./秋招复习/linked_list.py"
+- 详细程序见"./秋招复习/linked_list.py" and "/home/ray/Documents/Data/mynotes/cs/train/剑指offer"(Java)
+- 参考：https://blog.csdn.net/lihongxun945/article/details/51233981
+- 链表题主要考对指针的操作
+
 *** 单链表翻转
 
-*** 移除链表第K个值 
+*** 移除链表倒数第K个值 
 
-***  
+*** 链表第m~n部分翻转：
+思路：将m, m+1,...n-1个节点移动到节点n后面去
 
-** 数组
+*** 链表
 
 
+** 顺序表
+
+*** 二分法取值
+
+
+#+BEGIN_SRC python :results output
+  def has_value(arr, value):
+      left = 0
+      right = len(arr) - 1
+
+      while left <= right:
+          center = (left + right) // 2
+          temp =  arr[center]
+          if temp > value:
+              right = center - 1
+          elif temp < value:
+              left = center + 1
+          else:
+              return True
+      return False
+
+  print(has_value([1,2,3,5],5))
+#+END_SRC
+
+#+RESULTS:
+: True
+
+
+
+*** 求sqrt
+
+
+#+BEGIN_SRC python :results output
+  def sqrt(x):
+      start = 0
+      end = x
+      while abs(start - end) >= 0.001:
+          mid = (start + end) / 2
+          val = mid**2
+          if val > x:
+              end = mid
+          elif val < x:
+              start = mid
+          else:
+              break
+      return mid
+
+  print(sqrt(5))
+#+END_SRC
+
+#+RESULTS:
+: 2.2357177734375
+
+
+*** 二值和问题(衍生三值、多值求和问题）
+
+
+#+BEGIN_SRC python :results output
+  def has_two_sum(arr, s):
+      """
+      arr有序时
+      """
+      i, j = 0, len(arr)-1
+      while i <= j:
+          if arr[i] + arr[j] < s:
+              i += 1
+          elif arr[i] + arr[j] > s:
+              j -= 1
+          else:
+              return True
+      return False
+
+  def has_two_sum2(arr, s):
+      my_set = set()
+      for i in arr:
+          p = s - i
+          if i in my_set:
+              return True
+          my_set.add(p)
+      return False
+
+  print(has_two_sum2([1,2,4,5,7,8], 11))
+#+END_SRC
+
+#+RESULTS:
+: True
+
+
+
+
+*** 全排列问题 
+
+- 无重复数字的全排列
+- 有重复数字的全排列
+- 下一个全排列
+- 取特定位置的全排列
+
+**** 有重复数字的全排列
+#+BEGIN_SRC python :results output
+  res = []
+  def all_permutation(arr, i):
+      """有重复数字的全排列
+      """
+      if i >= len(arr):
+          res.append(arr[:])
+      else:
+          s = set()
+          for j in range(i, len(arr)):
+              if arr[j] in s:
+                  continue
+              arr[j], arr[i] = arr[i], arr[j]
+              all_permutation(arr, i+1)
+              arr[j], arr[i] = arr[i], arr[j]
+              s.add(arr[j])
+  all_permutation([1,2,2], 0)
+  print(res)
+#+END_SRC
+
+#+RESULTS:
+: [[1, 2, 2], [2, 1, 2], [2, 2, 1]]
+
+
+**** 下一个全排列（字典序问题）
+
+思路：
+从尾到头的非递减子数组为k~n，将其上一个元素与子数组里面大于他的最小元素交换，同时对子数组从大到小排序
+
+
+#+BEGIN_SRC python :results output
+  def next_arr(arr):
+      k = -1
+      for i in range(len(arr)-1, 0, -1):
+          if arr[i] > arr[i-1]:
+              k = i
+              break
+      if k == -1:return list(reversed(arr))
+      _min = 9999
+      flag = -1
+      for i in range(k, len(arr)):
+          if arr[i] > arr[k-1] and arr[i] < _min:
+              _min = arr[i]
+              flag = i
+      arr[k-1], arr[flag] = arr[flag], arr[k-1]
+      arr[k:] = sorted(arr[k:])
+      return arr
+
+  print(next_arr([3,2,1]))
+#+END_SRC
+
+#+RESULTS:
+: [1, 2, 3]
+
+
+
+
+
+
+**** 第n个全排列
+
+think about it
+
+#+BEGIN_SRC python :results output
+  import math
+  def the_kst_permutation(arr, k, res):
+      n = len(arr)
+      if n == 1:
+          res.append(arr[0])
+          return
+      arr.sort()
+      fac = math.factorial(n-1)
+      l = k // fac
+      p = k % fac
+      res.append(arr[l])
+      arr.remove(arr[l])
+      the_kst_permutation(arr, p, res)
+  res = []
+  the_kst_permutation([1,2,3,4], 13, res)
+  print(res)
+
+
+#+END_SRC
+
+#+RESULTS:
+: [3, 1, 4, 2]
+
+
+
+
+
+*** topK相关问题
+
+**** 堆解决
+
+维护一个长为k的小顶堆，如果输入的值小于堆顶元素，则跳过，否则替换堆顶元素，并且调整堆
+O(nlogn)
+ 
+**** 快排解决
+
+
+#+BEGIN_SRC python :results output
+  def get_topk(arr, k):
+      i = 0
+      j = len(arr) - 1
+      while 1:
+          s = i
+          e = j
+          target = arr[j]
+          while i < j:
+              while i < j and arr[i] <= target:
+                  i += 1
+              arr[j] = arr[i]
+              while i < j and arr[j] > target:
+                  j -= 1
+              arr[i] = arr[j]
+          arr[i] = target
+          if i == k:
+              break
+          elif i < k:
+              i += 1
+              j = e
+          else:
+              j = i-1
+              i = s
+      return arr[:k]
+
+  print(get_topk([1,5,4,2,0], 3))
+
+#+END_SRC
+
+#+RESULTS:
+: [0, 1, 2]
+
+
+
+
+
+
+*** 最大连续子数组的和、乘积
+
+**** 最大连续和
+#+BEGIN_SRC python :results output
+  def max_sum(arr):
+      cur, _max = 0, 0
+      for i in arr:
+          cur = max(0, cur + i)
+          _max = max(cur, _max)
+      return _max
+
+  print(max_sum([11,3,2,-1,-15,8,-10, 12]))
+#+END_SRC
+
+#+RESULTS:
+: 16
+
+
+**** 最大连续乘积
+
+动态规划
+
+
+#+BEGIN_SRC python :results output
+  def max_times(arr):
+      res = [[0 for i in range(3)] for i in range(len(arr))]
+      res[0][0] = res[0][1] = res[0][2] = arr[0]
+      for i, line in enumerate(res):
+          print(res)
+          if i != 0:
+              res[i][1] = max(max(arr[i] * res[i-1][1], arr[i] * res[i-1][2]), arr[i])
+              res[i][2] = min(min(arr[i] * res[i-1][1], arr[i] * res[i-1][2]), arr[i])
+      return res
+
+  print(max_times([1,3,-2,5,6,-1, -9]))
+#+END_SRC
+
+#+RESULTS:
+: [[1, 1, 1], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+: [[1, 1, 1], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+: [[1, 1, 1], [1, 3, 3], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+: [[1, 1, 1], [1, 3, 3], [3, -2, -6], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+: [[1, 1, 1], [1, 3, 3], [3, -2, -6], [3, 5, -30], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+: [[1, 1, 1], [1, 3, 3], [3, -2, -6], [3, 5, -30], [5, 30, -180], [0, 0, 0], [0, 0, 0]]
+: [[1, 1, 1], [1, 3, 3], [3, -2, -6], [3, 5, -30], [5, 30, -180], [30, 180, -30], [0, 0, 0]]
+: [[1, 1, 1], [1, 3, 3], [3, -2, -6], [3, 5, -30], [5, 30, -180], [30, 180, -30], [180, 270, -1620]]
+
+
+
+* 基于树的算法
+
+
+
+* 基于图的算法
 * 经典算法思路
 
 
@@ -246,3 +577,6 @@ S = 1*2^(H-1) + 2*2^(H-2) + ... + H*2^(H-H) = 2N - 2 - log2(N)，因此时间复
 ** 分治
 
 ** 动态规划
+
+
+** 

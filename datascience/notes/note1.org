@@ -695,17 +695,25 @@ J = \frac{1}{N}\sum_{i=1}^N (f(x_i) - y_i)^2 + \lambda \sum_{i=1}^N ||w||^2
 [[file:pics/ridge.png]]
 
 
+L1 正则：
+
+\begin{eqnarray}
+\nonumber
+P(w|\lambda) = Laplace(0, \lambda) = \frac{1}{2\lambda} exp(- \frac{|w-0|}{\lambda})
+\end{eqnarray}
+
+乘上目标概率并且求log之后，即可得到L1项： $-\frac{1}{\lambda}\sum|w|$
+
+
 =为什么 L1 正则可做特征选择？=
 
 1. 图形角度
 [[file:pics/lasso.png]]
 2. 概率论角度
 
+
 - L1 加入了拉普拉斯先验，尖峰，在 0 处概率非常高
 - L2 加入了高斯先验，钟形，在 0 处概率和 0 附近概率差不多
-
-
-
 
 
 **** 基于树的特征选择
@@ -762,7 +770,7 @@ A = Q \Sigma Q^{-1}
 
   \begin{eqnarray}
 \nonumber
-\max_{\lambda} {Var(\theta_1 X)}} \\
+\max_{\lambda} {Var(\theta_1 A)}} \\
 \nonumber
 s.t. \ \ \theta_1 \theta_1^T = 1
 \end{eqnarray}
@@ -773,10 +781,10 @@ s.t. \ \ \theta_1 \theta_1^T = 1
 
 \begin{eqnarray}
 \nonumber
-\phi(\theta) = \theta_1 \Sigma \theta_1^T - \lambda (\theta_1 \theta_1^T - 1)
+\phi(\theta) = \theta_1 A \theta_1^T - \lambda (\theta_1 \theta_1^T - 1)
 \end{eqnarray}
 
-对 θ 求导可以得到 $2(\Sigma - \lambda E) \theta_1 = 0$  由于 θ 不等于 0,因此转换为 $|\Sigma - \lambda E| = 0$ 即特征值问题
+对 θ 求导可以得到 $2(A - \lambda E) \theta_1 = 0$  由于 θ 不等于 0,因此转换为 $|A - \lambda E| = 0$ 即特征值问题
 
 *** SVD 分解
 
@@ -784,7 +792,7 @@ ref:
 - https://blog.csdn.net/zhongkejingwang/article/details/43053513
 - https://www.cnblogs.com/pinard/p/6251584.html
 
-**** 正交向量和正交矩阵
+**** 正交向量和正交矩阵(酉矩阵)
 
 正交向量即点积为 0 的两个向量 
 
@@ -837,7 +845,16 @@ A_{m \times n} = U_{m \times m} \Sigma_{m \times n} V^T_{n \times n}
 
 *** 线性判别分析
 
-ref: https://blog.csdn.net/daunxx/article/details/51881956
+ref: 
+- https://blog.csdn.net/daunxx/article/details/51881956
+- https://www.cnblogs.com/pinard/p/6244265.html
+
+=要点：=
+- 有监督学习
+- 投影后类内方差最小，类间方差最大
+- 既可以降维，有可以分类
+- LDA选择分类性能最好的投影方向，而PCA选择样本点投影具有最大方差的方向
+- LDA在样本分类信息依赖方差而不是均值的时候，降维效果不好
 
 根据假设的条件分布 P(x|y)寻找决策面，我们知道：
 
@@ -898,10 +915,10 @@ ref:
 ** DONE 模型评价[4/4]
 
 *** DONE 二分类模型
-- accuracy
-- precision
-- recall
-- f1
+- accuracy $\frac{TP + TN }{TP+TN + FP +FN}$
+- precision $\frac{TP}{TP + FP}$
+- recall $\frac{TP}{TP + FN}$
+- f1 $\frac{2 * pre*rec}{pre + rec}$
 - auc_roc
   - 只在输出为概率时有用，如 logistic 回归
   - auc 位 roc 曲线的下面积，其物理意义为任取一对正负样本对，正样本的 score 大于负样本的概率
@@ -914,11 +931,13 @@ ref:
        \nonumber
        AUC = \frac{\sum_i^M (rand\_i - 1 - (M-i))}{MN} = \frac{\sum_i^M rand\_i - M(M+1)/2}{MN}
        \end{eqnarray}
-
+    5.其他计算方式：根据TPR和FPR计算
+       + TPR = $\frac{TP}{TP+FN}$
+       + FPR = $\frac{FP}{FP + TN}$
 
 *** DONE 多分类模型
-- f1_micro
-- f1_macro
+- f1_micro：计算总的TP， FP，FN，然后计算F1
+- f1_macro：计算每一类别的TP，FP，FN，然后计算每个类别的F1，再取平均
 - f1_weight
 *** DONE 回归模型
 DEADLINE: <2018-01-06 周六>
@@ -1012,6 +1031,8 @@ H_t = - \sum_k \frac{N_{tk}}{{N_t}} log \frac{N_{tk}}{{N_t}}
 
 前半部分表示了模型整体的效果，后半部分表示了惩罚项，叶节点越多越复杂
 
+~理解：为何要加上N_t~ 把N_t理解为总次数，把H_t理解为不确定性，相乘相当于是的得到一个不确定次数，另其最小
+
 
 
 *** 回归树
@@ -1023,8 +1044,40 @@ H_t = - \sum_k \frac{N_{tk}}{{N_t}} log \frac{N_{tk}}{{N_t}}
 
 1. 前剪枝（设置参数）
 2. 后剪枝：
-   1. 误差降低剪枝，原始根节点和去掉一个节点后根节点在测试集上的误判数量对比，如果去掉后误判减少了，则实现剪枝(需要测试集)
-   2. 悲观剪枝，不需要测试集，二项分布渐进正态，连续修正因子，均值、方差为 np、np(1-p)，当子树错误率大于等于叶子节点的错误率+一个标准差后，进行剪枝
+   1. 误差降低剪枝（REP），原始根节点和去掉一个节点后根节点在测试集上的误判数量对比，如果去掉后误判减少了，则实现剪枝(需要测试集)
+   2. 悲观剪枝（PEP），不需要测试集，二项分布渐进正态，连续修正因子，均值、方差为 np、np(1-p)，当子树错误率大于等于叶子节点的错误率+一个标准差后，进行剪枝
+
+**** 悲观剪枝详细操作
+
+~如何计算子树误差率和叶节点误差率~
+
+- 子树误差率即计算其所有叶子节点造成的误差率，等于
+
+\begin{eqnarray}
+\nonumber
+e_{tree} = \frac{\sum^L E_i + 0.5 * L}{\sum^L N_i}
+\end{eqnarray}
+
+其中L为子数的叶子节点数目，E_i为每个叶子节点误判数目，N_i为每个叶子节点的样本数
+
+- 叶节点的误差率等于 $e_{leaf} = \frac{E + 0.5}{N}$ ，含义同上
+
+而子树的 ~误差数目~ 服从正态分布（单个误差服从二项分布），所以有：
+
+\begin{eqnarray}
+\nonumber
+E(subtree \  error \ count) &=& N * e_{tree} \\
+Var(subtree \  error \  count) &=& N * e_{tree} * (1 - e_{tree})
+\end{eqnarray}
+
+所以我们可以计算出误判数的 ~标准差~ ，任何情况下，一个子树的误差总是小于其剪枝作为一个叶节点的误差，但是如果给定一个标准差范围，就不一定了。
+
+而悲观剪枝则是给定一个标准差，如果： 子树误差数目 + 标准差 >= 将其剪枝为叶节点的误差数目，则进行剪枝。
+
+一个例子：
+
+[[file:pics/pep.png]]
+
 
 ** DONE 随机森林
 *** 概述
@@ -1033,7 +1086,7 @@ H_t = - \sum_k \frac{N_{tk}}{{N_t}} log \frac{N_{tk}}{{N_t}}
 - 森林：根据集成学习(Ensemble Learning)的思想，通过多个决策树进行分类，最终结果由多个决策树结果投票得到
 - 随机：决策树的训练样本是从原始训练集中随机得到的：
   - 原始训练集的总样本数为 N，而每棵树的随机训练集的样本数也为 N，但是是从原始样本中有放回抽 N 次得到的(bootstrap)
-  - 原始训练集的总特征数为 M，而每棵树的随机训练集的特征数为 m(m<=M)，从原始样本的 M 个特征中随机无放回的抽取，m 为随机森林唯一的超参数
+  - 原始训练集的总特征数为 M，而每棵树的随机训练集的特征数为 m(m<=M)，从原始样本的 M 个特征中随机无放回的抽取，m 为随机森林除了树参数之外的唯一的超参数
 
 =为什么抽取样本时是有放回的= 如果不是有放回抽样，则每颗树的训练样本都是一样的（如果抽 N 个）、或者是高度相关的（如果抽 n(n<N)个样本，此时至少有(2*n-N)个样本是一样的） 
 
