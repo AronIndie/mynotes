@@ -109,7 +109,7 @@ $$
 
 是基于数据使用贝叶斯定理估计目标函数的后验分布，然后再根据分布选择下一个采样的超参数组合。它充分利用了前一个采样点的信息，其优化的工作方式是通过对目标函数形状的学习，并找到使结果向全局最大提升的参数
 
-~高斯过程~ 用于在贝叶斯优化中对目标函数建模，得到其后验分布
+**高斯过程** 用于在贝叶斯优化中对目标函数建模，得到其后验分布
 
 通过高斯过程建模之后，我们尝试抽样进行样本计算，而贝叶斯优化很容易在局部最优解上不断采样，这就涉及到了开发和探索之间的权衡。
 
@@ -117,27 +117,90 @@ $$
 - 探索 (exploration):     在还未取样的区域获取采样点，   探索高意味着方差高
 
 
+而如何高效的采样，即开发和探索，我们需要用到 **Acquisition Function**, 它是用来寻找下一个 x 的函数。
 
-### Acquisition Function
 
-用来寻找下一个 x 的函数
+###  Acquistion Function
+
+一般形式的Acquisition Funtion是关于x的函数，映射到实数空间R，表示改点的目标函数值能够比当前最优值大多少的概率，目前主要有以下几种主流的Acquisition Function
+
+
+#### POI(probability of improvement)
+
+$$
+POI(X) = P(f(X) \ge f(X^+) + \xi) = \Phi(\frac{\mu(x) - f(X^+) - \xi}{\sigma(x)})
+$$
+
+其中， $f(X)$ 为X的目标函数值， $f(X^+)$ 为 **到目前为止** 最优的X的目标函数值， $\mu(x), \sigma(x)$ 分别是高斯过程所得到的目标函数的均值和方差，即 $f(X)$ 的后验分布。 $\xi$ 为trade-off系数,如果没有该系数，POI函数会倾向于取在 $X^+$ 周围的点，即倾向于exploit而不是explore，因此加入该项进行权衡。
+
+而我们要做的，就是尝试新的X，使得 $POI(X)$ 最大，则采取该$X$ （因为$f(X)$的计算代价非常大），通常我们使用 **蒙特卡洛模拟** 的方法进行。
+
+详细情况见下图（图片来自 Ref[5])
+
+![](https://images2018.cnblogs.com/blog/998084/201807/998084-20180729210806816-1260397803.png)
+
+
+#### Expected Improvement
+
+POI是一个概率函数，因此只考虑了$f(x)$ 比 $f(x^+)$ 大的概率，而EI则是一个期望函数，因此考虑了 $f(x)$ 比 $f(x^+)$ 大多少。我们通过下式获取$x$
+
+$$
+x = argmax_x \ \  E(\max\{0, f_{t+1}(x) - f(X^+)\}| D_t)
+$$
+
+其中 $D_t$ 为前t个样本，在正态分布的假定下，最终得到:
+
+$$
+EI(x) = 
+\begin{cases}
+(\mu(x) - f(x^+)) \Phi(Z) + \sigma(x) \phi(Z), if \ \sigma(x) > 0 \\
+0, if \ \sigma(x) = 0
+\end{cases}
+$$
+
+
+ $$
+ Z= \frac{\mu(x) - f(x^+)}{\sigma(x)}
+ $$
+
+#### Confidence bound criteria
+
+$$
+LCB(x) = \mu(x) - \kappa \sigma(x)
+$$
+
+
+$$
+UCB(x) = \mu(x) + \kappa \sigma(x) 
+$$
+
+
 
 
 ## 2.3 缺点和不足
 
-高斯过程核矩阵不好选
-
-贝叶斯优化
+- 高斯过程核矩阵不好选
 
 
-# 三、应用
+
+
+# 三、例子
+
+目前可以做贝叶斯优化的包非常多,光是python就有:
+
+- [BayesianOptimization](https://github.com/fmfn/BayesianOptimization)
+- [bayesopt](https://github.com/rmcantin/bayesopt)
+- [skopt](https://github.com/scikit-optimize/scikit-optimize/tree/master/skop)
+- ...
+
+本文使用BayesianOptimization，以
 
 
 
 # Reference
 
-- J. Snoek, H. Larochelle, and R. P. Adams, “Practical bayesianoptimization of machine learning algorithms,” in Advances in neural information processing systems, 2012, pp. 2951–2959.
-- 高斯过程：http://www.gaussianprocess.org/gpml/
-- 高斯过程：https://www.zhihu.com/question/46631426?sort=created
-- 高斯过程：http://www.360doc.com/content/17/0810/05/43535834_678049865.shtml
-- 
+- [1] J. Snoek, H. Larochelle, and R. P. Adams, “Practical bayesianoptimization of machine learning algorithms,” in Advances in neural information processing systems, 2012, pp. 2951–2959.
+- [2] 高斯过程：http://www.gaussianprocess.org/gpml/
+- [3] 高斯过程：https://www.zhihu.com/question/46631426?sort=created
+- [4] 高斯过程：http://www.360doc.com/content/17/0810/05/43535834_678049865.shtml
+- [5] Brochu E, Cora V M, De Freitas N. A tutorial on Bayesian optimization of expensive cost functions, with application to active user modeling and hierarchical reinforcement learning[J]. arXiv preprint arXiv:1012.2599, 2010.
