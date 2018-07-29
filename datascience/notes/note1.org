@@ -852,7 +852,7 @@ ref:
 =要点：=
 - 有监督学习
 - 投影后类内方差最小，类间方差最大
-- 既可以降维，有可以分类
+- 既可以降维，又可以分类
 - LDA选择分类性能最好的投影方向，而PCA选择样本点投影具有最大方差的方向
 - LDA在样本分类信息依赖方差而不是均值的时候，降维效果不好
 
@@ -1235,6 +1235,7 @@ p(y;p) = p^y (1-p)^{(1-y)} = exp(y \ln{p} + (1-y)\ln{(1-p)}) = exp(y \ln{\frac{p
 
 =sigmoid 的重要性质：=
 
+
 $$
 f'(x) = f(x)(1-f(x))
 $$
@@ -1349,6 +1350,13 @@ w_j := w_j - \eta \frac{\partial J(w)}{\partial w_i} = w_j + \eta \sum_{i=1}^n (
 
 随机梯度下降是指每次更新权重时随机选出一个样本进行，而不是之前的全样本计算然后加总
 
+
+**** 冲量（动量）随机下降 Momentum 
+
+ref:
+- https://www.jianshu.com/p/58b3fe300ecb
+
+
 =随机梯度下降加速= 对梯度下降重新建模： $w := m * w - \eta ()$ ，m 表示动量（ ~Momentum~ ），物理意义为摩擦力，为了防止参数在谷底不能停止的情况，一般在一开始将 m 设为 0.5，在一定的迭代次数后不断增加，最后到 0.99。
 
 在实践中，一般采取 SGD + momentum 的方式
@@ -1357,7 +1365,7 @@ w_j := w_j - \eta \frac{\partial J(w)}{\partial w_i} = w_j + \eta \sum_{i=1}^n (
 
 **** 学习率更新
 - 逐步降低（Step decay），即经过一定迭代次数后将学习率乘以一个小的衰减因子。典型的做法包括经过 5 次迭代（epoch）后学习率乘以 0.5，或者 20 次迭代后乘以 0.1。
-- 指数衰减（Exponential decay），其数学表达式可以表示为：α=α0e−kt，其中，α0 和 k 是需要设置的超参数，t 是迭代次数。
+- 指数衰减（Exponential decay），其数学表达式可以表示为： $\alpha = \alpha_0^{-kt}$ ，其中，α0 和 k 是需要设置的超参数，t 是迭代次数。
 - 倒数衰减（1/t decay），其数学表达式可以表示为：α=α0/(1+kt)，其中，α0 和 k 是需要设置的超参数，t 是迭代次数。
 
 实践中发现逐步衰减的效果优于另外两种方法，一方面在于其需要设置的超参数数量少，另一方面其可解释性也强于另两种方法。
@@ -1367,11 +1375,25 @@ w_j := w_j - \eta \frac{\partial J(w)}{\partial w_i} = w_j + \eta \sum_{i=1}^n (
 ** DONE 实现
 见 mysimlpelogit.py
 ** DONE 多元 logistic 情况（Multinormal）
+
+**** 方法一
 如果存在多个分类，那么可以训练多个分类器，一类一个，每一个训练样本都只属于下面两类：“是这类”和“不是这类”。训练的时候也是训练 N 套参数。
 
 对于一个测试样本，带入每一个分类器计算一遍概率，以概率最大的分类有效。
 
-* DONE 基于贝叶斯的算法
+
+
+**** 方法二：softmax回归
+
+ref:
+- https://www.cnblogs.com/Rambler1995/p/5467071.html
+
+简单的来说就是把常规的logistics损失写成多类相加的情况
+
+
+
+
+* DONE 基于贝叶斯的算法 
 - State "DONE"       from ""           [2018-01-17 周三 12:58]
 ** 朴素贝叶斯
 ref: 西瓜书
@@ -1568,7 +1590,7 @@ k(x_n, x_1) , k(x_n, x_2), ..., k(x_n, x_n)
 
 \begin{eqnarray}
 \nonumber
-p(y_*| \mathbf{y} \sim N(K_* K^{-1} \mathbf{y}, ~  K_{**} - K_* K^{-1} K_*^T)
+p(y_*| \mathbf{y}) \sim N(K_* K^{-1} \mathbf{y}, ~  K_{**} - K_* K^{-1} K_*^T)
 \end{eqnarray}
 
 其中，K_*为训练集的核向量，有如下关系：
@@ -1621,11 +1643,68 @@ L = log p(y| x, \theta) = - \frac{1}{2} log|\mathbf{K}| - \frac{1}{2} (y - \mu)^
 
 通过高斯过程建模之后，我们尝试抽样进行样本计算，而贝叶斯优化很容易在局部最优解上不断采样，这就涉及到了开发和探索之间的权衡。
 
-- 开发 (exploitation)：   根据后验分布，在最可能出现全局最优解的区域进行采样, 开发高意味着均值高
+- 开发 (exploitation)：   根据后验分布，在最可能出现全局最优解附近的区域进行采样, 开发高意味着均值高
 - 探索 (exploration):     在还未取样的区域获取采样点，   探索高意味着方差高
 
-=Acquisition Function=
-用来寻找下一个 x 的函数
+而如何高效的采样，即开发和探索，我们需要用到 ~Acquisition Function~ 它是用来寻找下一个 x 的函数。
+
+
+
+*** Acquistion Function
+
+一般形式的Acquisition Funtion是关于x的函数，映射到实数空间R，表示改点的目标函数值能够比当前最优值大多少的概率，目前主要有以下几种主流的Acquisition Function
+
+
+**** POI(probability of improvement)
+
+\begin{eqnarray}
+\nonumber
+POI(X) = P(f(X) \ge f(X^+) + \xi) = \Phi(\frac{\mu(x) - f(X^+) - \xi}{\sigma(x)})
+\end{eqnarray}
+
+其中， $f(X)$ 为X的目标函数值， $f(X^+)$ 为 ~到目前为止~ 最优的X的目标函数值， $\mu(x), \sigma(x)$ 分别是高斯过程所得到的目标函数的均值和方差，即 $f(X)$ 的后验分布。 $\xi$ 为trade-off系数,如果没有该系数，POI函数会倾向于取在 $X^+$ 周围的点，即倾向于exploit而不是explore，因此加入该项进行权衡。
+
+而我们要做的，就是尝试新的X，使得 POI(X)最大，则采取该X （因为f(X)的计算代价非常大），通常我们使用 ~蒙特卡洛模拟~ 的方法进行。
+
+详细情况见下图（图片来自 Brochu E, Cora V M, De Freitas N. A tutorial on Bayesian optimization of expensive cost functions, with application to active user modeling and hierarchical reinforcement learning[J]. arXiv preprint arXiv:1012.2599, 2010.)
+
+
+
+[[file:pics/acquistion_func_1.png]]
+
+**** Expected Improvement
+
+POI是一个概率函数，因此只考虑了f(x) 比 $f(x^+)$ 大的概率，而EI则是一个期望函数，因此考虑了 f(x) 比 $f(x^+)$ 大多少。我们通过下式获取x
+
+\begin{eqnarray}
+\nonumber
+x = argmax_x \ \  E(\max\{0, f_{t+1}(x) - f(X^+)\}| D_t)
+\end{eqnarray}
+
+其中 $D_t$ 为前t个样本，在正态分布的假定下，最终得到:
+
+\begin{eqnarray}
+\nonumber
+EI(x) = 
+\begin{cases}
+(\mu(x) - f(x^+)) \Phi(Z) + \sigma(x) \phi(Z), if \ \sigma(x) > 0 \\
+0, if \ \sigma(x) = 0
+\end{cases}
+\end{eqnarray}
+
+
+其中 $Z= \frac{\mu(x) - f(x^+)}{\sigma(x)}$
+
+**** Confidence bound criteria
+
+\begin{eqnarray}
+\nonumber
+LCB(x) = \mu(x) - \kappa \sigma(x) \\
+\nonumber
+UCB(x) = \mu(x) + \kappa \sigma(x) 
+\end{eqnarray}
+
+
 
 * DONE EM 算法
 - State "DONE"       from ""           [2018-01-17 周三 13:30]
@@ -1828,7 +1907,7 @@ ref: http://blog.csdn.net/sb19931201/article/details/52557382
 ref: https://blog.csdn.net/ice110956/article/details/13775071
 半监督（由于标记样本成本高昂，因此半监督学习同时利用标记的样本和未标记的样本），生成式，EM 算法进行估计
 
-估计过程和 k-means 非常类似，只不过初始值时正态分布参数而不是聚类中心点
+估计过程和 k-means 非常类似，只不过初始值时正态分布参数而不是聚类中心点, 同样判断距离也是根据正态分布下得到的概率
 
 * TODO 支持向量机[4/6]
 - State "TODO"       from "TODO"       [2018-05-31 四 13:13]

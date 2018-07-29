@@ -565,7 +565,71 @@ O(nlogn)
 
 * 基于树的算法
 
+*** 树的遍历
 
+见 tree.py
+
+
+
+
+*** 二叉树判等
+
+
+#+BEGIN_SRC python :results output
+  def is_tree_equal(root1, root2):
+      if root1 is None and root2 is None:
+          return True
+
+      if (root1 is None and root2 is not None) or (root1 is not None and root2 is None):
+          return False
+
+      if root1.val == root2.val:
+          return is_tree_equal(root1.left, root2.left) and is_tree_equal(root1.right, root2.right)
+      else:
+          return False
+
+#+END_SRC
+
+
+
+*** 二叉树翻转
+
+
+#+BEGIN_SRC python :results output
+  def rotate_tree(root):
+
+      if not root or (root.left is None and root.right is None):
+          return root
+
+      root.left, root.right = rotate_tree(root.right), rotate_tree(root.left)
+      return root
+#+END_SRC
+
+
+*** 二叉树是否镜像
+
+
+#+BEGIN_SRC python :results output
+  def is_mirror_tree(root):
+      return is_mirror(root.left, root.right)
+
+  def is_mirror(root1, root2):
+      if root1 is None and root2 is None:
+          return True
+
+      if root1 is None or root2 is None:
+          return False
+
+      if root1.val == root2.val:
+          return is_mirror(root1.left, root2.right) and is_mirror(root1.right, root2.left)
+      return Fase
+
+#+END_SRC
+
+
+*** 二叉树是否为另一颗子树(阿里暑期实习面试题)
+
+略
 
 * 基于图的算法
 * 经典算法思路
