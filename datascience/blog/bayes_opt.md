@@ -193,9 +193,130 @@ $$
 - [skopt](https://github.com/scikit-optimize/scikit-optimize/tree/master/skop)
 - ...
 
-本文使用BayesianOptimization，以
+本文使用BayesianOptimization为例，利用sklearn的随机森林模型进行分类
+
+## 安装
+
+```bash
+pip install bayesian-optimization
+```
+
+## 前期准备
+
+```python
+from sklearn.datasets import make_classification
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cross_validation import cross_val_score
+from bayes_opt import BayesianOptimization
+
+# 产生随机分类数据集，10个特征， 2个类别
+x, y = make_classification(n_samples=1000,n_features=10,n_classes=2)
+```
+
+我们先看看不调参的结果：
+
+```python
+rf = RandomForestClassifier()
+print(np.mean(cross_val_score(rf, x, y, cv=20, scoring='roc_auc')))
+
+>>> 0.965162
+```
+
+可以看到，不调参的话模型20此交叉验证AUC均值是0.965162，算是一个不错的模型，那么如果用bayes调参结果会怎么样呢
+
+## bayes调参初探
+
+我们先定义一个目标函数，里面放入我们希望优化的函数。比如此时，函数输入为随机森林的所有参数，输出为模型交叉验证5次的AUC均值，作为我们的目标函数。因为`bayes_opt`库只支持最大值，所以最后的输出如果是越小越好，那么需要在前面加上负号，以转为最大值。由于bayes优化只能优化连续超参数，因此要加上`int()`转为离散超参数。
+
+```python
+def rf_cv(n_estimators, min_samples_split, max_features, max_depth):
+    val = cross_val_score(
+        RandomForestClassifier(n_estimators=int(n_estimators),
+            min_samples_split=int(min_samples_split),
+            max_features=min(max_features, 0.999), # float
+            max_depth=int(max_depth),
+            random_state=2
+        ),
+        x, y, 'roc_auc', cv=5
+    ).mean()
+    return val
+
+```
+
+然后我们就可以实例化一个bayes优化对象了：
+
+```python
+ rf_bo = BayesianOptimization(
+        rf_cv,
+        {'n_estimators': (10, 250),
+        'min_samples_split': (2, 25),
+        'max_features': (0.1, 0.999),
+        'max_depth': (5, 15)}
+    )
+```
+
+里面的第一个参数是我们的优化目标函数，第二个参数是我们所需要输入的超参数名称，以及其范围。超参数名称必须和目标函数的输入名称一一对应。
+
+完成上面两步之后，我们就可以运行bayes优化了！
+
+```python
+rf_bo.maximize()
+```
+
+完成的时候会不断地输出结果，如下图所示：
 
 
+
+等到程序结束，我们可以查看当前最优的参数和结果：
+
+```python
+rf_bo.res['max']
+```
+
+## bayes调参进阶
+
+上面bayes算法得到的参数并不一定最优，当然我们会遇到一种情况，就是我们已经知道有一组或是几组参数是非常好的了，我们想知道其附近有没有更好的。这个操作相当于上文bayes优化中的Explore操作，而bayes_opt库给了我们实现此方法的函数：
+
+```python
+
+rf_bo.explore(
+    {'n_estimators': [10, 100, 200],
+        'min_samples_split': [2, 10, 20],
+        'max_features': [0.1, 0.5, 0.9],
+        'max_depth': [5, 10, 15]
+    }
+)
+```
+
+这里我们添加了三组较优的超参数，让其在该参数基础上进行explore，可能会得到更好的结果。
+
+同时，我们还可以修改高斯过程的参数，高斯过程主要参数是核函数(`kernel`)，还有其他参数可以参考[sklearn.gaussianprocess](http://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessRegressor.html)
+
+```python
+gp_param={'kernel':None}
+rf_bo.maximize(**gp_param)
+```
+
+最终我们的到参数如下：
+
+```python
+{'max_params': {'max_depth': 5.819908283575526,
+  'max_features': 0.4951745603509127,
+  'min_samples_split': 2.3110014720414958,
+  'n_estimators': 249.73529231990733},
+ 'max_val': 0.9774079407940794}
+```
+
+运行交叉验证测试一下：
+
+```python
+rf = RandomForestClassifier(max_depth=6, max_features=0.39517, min_samples_split=2, n_estimators=250)
+np.mean(cross_val_score(rf, x, y, cv=20, scoring='roc_auc'))
+>>> 0.9754953
+```
+得到最终结果是0.9755，比之前的0.9652提高了约0.01，做过kaggle的朋友都懂，这在后期已经是非常大的提高了！到后面想提高0.001都极其困难，因此bayes优化真的非常强大！
+
+结束！
 
 # Reference
 

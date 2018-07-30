@@ -1759,9 +1759,9 @@ p(H(x) \neq f(x)) = \sum_{k=0}^{[T/2]} C_T^k (1 - \epsilon)^k \epsilon^{(1-k)} \
 
 =代表算法：AdaBoost, GBDT=
 
-bosting 采用的是弱基分类器，主要关注降低偏差， 证明见：https://www.zhihu.com/question/29036379
+boosting 采用的是弱基分类器，主要关注降低偏差， 证明见：https://www.zhihu.com/question/29036379
 
-基本思想： 通过对之前训练集进行调整，使之前错分的样本更加受到关注，然后在训练下一个模型，知道学习器数目达到事先制定的值 T，最终对 T 个基学习器进行加权结合。
+基本思想： 通过对之前训练集进行调整，使之前错分的样本更加受到关注，然后在训练下一个模型，直到学习器数目达到事先制定的值 T，最终对 T 个基学习器进行加权结合。
 
 Boosting 方法要求基学习器对特定数据分布（数据权重）进行学习，主要有两种方法：
 - 对于可以接受权重参数的基分类器，采用 re-weighting 方法，每次训练更新样本权重
@@ -1809,6 +1809,11 @@ https://blog.csdn.net/yangxudong/article/details/53872141（深入理解）
 =为什么可以这么做:=
 [[file:pics/gbdt_epsilon.png]]
 
+=w为什么要这么做，而不是直接计算残差=
+- ref: https://www.zhihu.com/question/63560633
+- 存在正则，如果只是经验风险最小化的话很容易过拟合，有正则的情况下不再是 $\hat{y}=y$ 时损失函数最小，而是需要计算损失函数的梯度
+- CART树是凸的（损失函数是经验熵+正则）
+
 =步骤=
 
 1、初始化，估计使损失函数极小化的常数值，它是只有一个根节点的树，即 gamma 是一个常数值。
@@ -1823,6 +1828,23 @@ https://blog.csdn.net/yangxudong/article/details/53872141（深入理解）
 
 [[file:pics/gbdt.png]]
 
+=步骤(c)最优化推导=
+ref: https://blog.csdn.net/yangxudong/article/details/53872141
+借助泰勒展开，可以得到：
+
+\begin{eqnarray}
+\nonumber
+L(y_i, f_{m-1}(x_i) + \gamma) = L(y_i, f_{m-1}(x_i)) + \frac{\partial L(y_i, f_{m-1}(x_i))}{\partial f_{m-1}(x_i)} \gamma + \frac{1}{2}h_{m-1, i} \gamma^2
+\end{eqnarray}
+
+其中， $h_{m-1, i}$ 是关于 $f_{m-1}(x_i)$ 的二阶偏导数，第一项是常数项可以剔除，因此就是优化：
+
+\begin{eqnarray}
+\nonumber
+argmin_{\gamma} \ \sum_i (g_{m-1, i} \gamma + h_{m-1,i} \gamma^2)
+\end{eqnarray}
+
+其中 $g_{m-1, i}$ 是关于 $f_{m-1}(x_i)$ 的一阶偏导数
 
 =可以证明，Gradient Boosting 相当于二分类的 Adaboost 算法， 而指数损失仅可用于二分类的情况=
 
@@ -1834,6 +1856,15 @@ https://blog.csdn.net/yangxudong/article/details/53872141（深入理解）
   - 如果训练中出现缺失值，将缺失的数据分别分到左子树和右子树，选择较优的那个
   - 如果测试汇总出现缺失值，则默认被分到右子树
 - GBDT 可以结合随机森林的 booststrap 抽样方法,以减少过拟合
+
+=多分类问题=
+- 交叉熵损失： $L(y, f(x)) = \sum y_i log(p_i)$
+- softmax:  $p_i = exp(f(x_i)) / \sum_l exp(f(x_i))$
+
+=正则化=
+- 学习率，$f_t(x) = f_{t-1}(x) + \nu h_{t}(x)$
+- 无放回抽样，抽样比例取值在0.5~0.8之间
+- CART剪枝
 
 *** bagging
 
@@ -1873,6 +1904,23 @@ ref: http://blog.csdn.net/sb19931201/article/details/52557382
 4.shrinkage and column subsampling —还是为了防止过拟合
 
 5. 。。。
+
+
+=参数意义=
+- eta： learning rate、shrinkage
+- min_child_weight：决定最小叶子节点样本权重和
+- max_depth：树最大深度
+- max_leaf_nodes：树上最大的节点或叶子的数量
+- gamma： 节点分裂的最小损失函数下降值
+- subsample：随机采样比例
+- colsample_bytree：每棵树列随机采样比例
+- colsample_bylevel：每一级的每一次分裂，列随机采样比例
+- lambda：权重的L2正则项，越大越防止过拟合
+- alpha：权重的L1正则项，越大越防止过拟合
+- scale_pos_weight：样本不平衡时使得算法收敛更快
+*** lightgbm
+
+...
 
 * DONE HMM、条件随机场、混合高斯
 ** DONE HMM
@@ -2020,7 +2068,7 @@ g_k(X^*) \le 0
 \alpha_i (1 - y ^{(i)} (w^T x ^{(i)} + b)) = 0 
 \end{eqnarray}
 
-上式反映出，如果 alpha_1 = 0，则意味着样本不会对 f(X)有任何影响；如果 alpha_i > 0， 则必有 $y ^{(i)} (w^T x ^{(i)} + b) =1$ ,所对应的样本在最大间隔边界上（结合图想一想为什么），是一个支持向量。
+上式反映出，如果 alpha_1 = 0，则意味着样本不会对 f(X)有任何影响；如果 alpha_i > 0， 则必有 $y ^{(i)} (w^T x ^{(i)} + b) =1$ ,所对应的样本在最大间隔边界上（结合图想一想为什么），是一个支持向量。 ~KKT条件帮助我们得到支持向量~
 
 从而可以得到支持向量机的一个重要性质： ~训练完成后，大部分训练样本都不需要保留，最后结果只和支持向量有关~
 
@@ -2058,6 +2106,79 @@ b = \frac{1}{|S|} \sum_{s \in S} (y_s - \sum_{i \in s} \alpha_i y_i x_i^T x_s)
 \end{eqnarray}
 
 其中，S 为所有的支持向量集合，判断样本是否为支持向量可以根据 KKT 条件的公式(2)
+
+**** SMO算法详细推导
+
+1. 拆开 $\alpha_1, \alpha_2$ 得到 
+
+\begin{eqnarray}
+\nonumber
+\Phi(\alpha_1, \alpha_2) = \frac{1}{2} \alpha_1^2 K_{11} + \frac{1}{2} \alpha_2^2 K_{22} + \alpha_1 \alpha_2 y_1 y_2 K_{12} - (\alpha_1 + \alpha_2) + \alpha_1 v_1 y_1 + \alpha_2 v_2 y_2 + constant
+\end{eqnarray}
+
+其中， $v_i = \sum_j^2 \alpha_j y_j K(x_i, x_j), \ \ i = 1, 2$
+
+2. 由 $\alpha_1 y_1 + \alpha_2 y_2 = - \sum_{i=3}^N \alpha_i y_i = \xi$，可以得到 $\alpha_1 y_1 = \xi - \alpha_2 y_2$ ，同时乘以 $y_1$，得到 $\alpha_1 = (\xi - \alpha_2 y_2) y_1$，带入上式，并且对 $\alpha_2 $ 求导，可以得到：
+
+\begin{eqnarray}
+\nonumber
+\alpha_2 (K_{11} + K+{22} - 2K_{12}) - K_{11} \xi y_2 + K_{12} \xi y_2 + y_1 y_2 - y_2 y_2 - v_1 y_2 + v_2 y_2 &=& 0 \\
+\alpha_2 (K_{11} + K+{22} - 2K_{12}) &=& y_2( K_{11} \xi + K_{12} \xi + y_1 - y_2 - v_1 + v_2)
+\end{eqnarray}
+
+3. 根据以下条件：
+
+- $\xi = \alpha_1 y_1 + \alpha_2 y_2$
+- $v_1 = \sum_{i=1}^N \alpha_i y_i K_{i1} + b - \sum_{i=1}^2 \alpha_i y_i K_{i1} - b= f(x_1) - \sum_{i=1}^2 \alpha_i y_i K_{i1} - b$
+- $v_2 = f(x_2) - \sum_{i=1}^2 \alpha_i y_i K_{i2} - b$
+
+带入(2.)中的式子后，可以得到：
+
+\begin{eqnarray}
+\nonumber
+\alpha_2 (K_{11} + K+{22} - 2K_{12}) = (K_{11} + K+{22} - 2K_{12}) \alpha^{old} + y_2 (f(x_1) - y_1 - (f(x_2) - y_2))
+\end{eqnarray}
+
+另 $f(x_i) - y_i = E_i$
+
+则：
+
+\begin{eqnarray}
+\nonumber
+\alpha_2^{new, unclipped} = \alpha_2^{old} + \frac{y_2 (E_1 - E_2) }{(K_{11} + K+{22} - 2K_{12})}
+\end{eqnarray}
+
+
+4. 由于优化方程中还存在范围约束，即 $0 \le \alpha \le C$，且 $\alpha_1 y_1 + \alpha_2 y_2 = \xi$，可以做出边界图：
+
+[[file:pics/smo_clip.png]]
+
+当 $y_1$ 和 $y_2$ 异号时，见左图（k的符号未知），而同号时见右图，点必须在图中斜线上，因此有实际 $\alpha_2^{new}$ 的范围：
+
+\begin{eqnarray}
+\nonumber
+\begin{cases}
+L = max(0, \alpha_1^{old} - \alpha_2^{old}) <= \alpha_2^{new} <= min(C, C - \alpha_1^{old} + \alpha_2^{old}) = H,\ \ left \\
+L = max(0, \alpha_1^{old} + \alpha_2^{old}-C) <= \alpha_2^{new} <= min(C, \alpha_1^{old} + \alpha_2^{old}) = H , \ \ right
+\end{cases}
+\end{eqnarray}
+
+最终我们有：
+
+\begin{eqnarray}
+\nonumber
+\alpha_2^{new} = 
+\begin{cases}
+H,\ \alpha_2^{new, unclipped} > H \\
+\alpha_2^{new, unclipped},\ L \le \alpha_2^{new, unclipped} \e H \\
+L,\ \alpha_2^{new, unclipped} < L
+\end{cases}
+\end{eqnarray}
+
+
+5. 每次 $\alpha_1, \alpha_2$ 的选择
+
+[[file:pics/smo_choose.png]]
 
 ** DONE 线性不可分支持向量机
 - State "DONE"       from "TODO"       [2018-01-18 周四 15:26]
@@ -2154,6 +2275,7 @@ y_i (w^T_i +b) \ge 1
 \nonumber
 d \ge \frac{2}{m \sqrt{C}}
 \end{eqnarray}
+
 其中 m 为支持向量个数，C 见上文
 
 
@@ -2220,6 +2342,8 @@ y_i f(x_i) - 1 + \zeta_i \ge 0 \\
 以上在求解 SMO 算法时有着重要的意义
 
 ** SOMEDAY 支持向量回归
+
+
 
 ** TODO 推导过程
 *** 几何间隔推导出优化方程一般形式
